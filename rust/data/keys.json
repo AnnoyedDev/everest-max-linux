@@ -1,0 +1,632 @@
+[
+{
+"name": "Scroll L",
+"matrix": 17,
+"dll": 188
+},
+{
+"name": "Scroll R",
+"matrix": 8,
+"dll": 187
+},
+{
+"name": "Pre Track",
+"matrix": 53,
+"dll": 181
+},
+{
+"name": "Next Track",
+"matrix": 62,
+"dll": 180
+},
+{
+"name": "Play Pause",
+"matrix": 183,
+"dll": 183
+},
+{
+"name": "Mute",
+"matrix": 35,
+"dll": 184
+},
+{
+"name": "Esc",
+"matrix": 0,
+"dll": 110
+},
+{
+"name": "F1",
+"matrix": 9,
+"dll": 112
+},
+{
+"name": "F2",
+"matrix": 18,
+"dll": 113
+},
+{
+"name": "F3",
+"matrix": 27,
+"dll": 114
+},
+{
+"name": "F4",
+"matrix": 36,
+"dll": 115
+},
+{
+"name": "F5",
+"matrix": 45,
+"dll": 116
+},
+{
+"name": "F6",
+"matrix": 54,
+"dll": 117
+},
+{
+"name": "F7",
+"matrix": 63,
+"dll": 118
+},
+{
+"name": "F8",
+"matrix": 72,
+"dll": 119
+},
+{
+"name": "F9",
+"matrix": 81,
+"dll": 120
+},
+{
+"name": "F10",
+"matrix": 90,
+"dll": 121
+},
+{
+"name": "F11",
+"matrix": 99,
+"dll": 122
+},
+{
+"name": "F12",
+"matrix": 108,
+"dll": 123
+},
+{
+"name": "F13",
+"matrix": 9,
+"dll": 230
+},
+{
+"name": "F14",
+"matrix": 18,
+"dll": 231
+},
+{
+"name": "F15",
+"matrix": 27,
+"dll": 232
+},
+{
+"name": "F16",
+"matrix": 36,
+"dll": 233
+},
+{
+"name": "F17",
+"matrix": 45,
+"dll": 234
+},
+{
+"name": "F18",
+"matrix": 54,
+"dll": 235
+},
+{
+"name": "F19",
+"matrix": 63,
+"dll": 236
+},
+{
+"name": "F20",
+"matrix": 72,
+"dll": 237
+},
+{
+"name": "F21",
+"matrix": 81,
+"dll": 238
+},
+{
+"name": "F22",
+"matrix": 90,
+"dll": 239
+},
+{
+"name": "F23",
+"matrix": 99,
+"dll": 240
+},
+{
+"name": "F24",
+"matrix": 108,
+"dll": 241
+},
+{
+"name": "Prt Sc",
+"matrix": 117,
+"dll": 124
+},
+{
+"name": "Scroll Lk",
+"matrix": 114,
+"dll": 125
+},
+{
+"name": "Pause",
+"matrix": 123,
+"dll": 126
+},
+{
+"name": "Insert",
+"matrix": 96,
+"dll": 75
+},
+{
+"name": "Home",
+"matrix": 105,
+"dll": 80
+},
+{
+"name": "PgUp",
+"matrix": 115,
+"dll": 85
+},
+{
+"name": "Del",
+"matrix": 88,
+"dll": 76
+},
+{
+"name": "End",
+"matrix": 97,
+"dll": 81
+},
+{
+"name": "PgDn",
+"matrix": 106,
+"dll": 86
+},
+{
+"name": "⏴",
+"matrix": 104,
+"dll": 79
+},
+{
+"name": "⏶",
+"matrix": 124,
+"dll": 83
+},
+{
+"name": "⏵",
+"matrix": 122,
+"dll": 89
+},
+{
+"name": "⏷",
+"matrix": 113,
+"dll": 84
+},
+{
+"name": "`",
+"matrix": 1,
+"dll": 1
+},
+{
+"name": "0",
+"matrix": 91,
+"dll": 11
+},
+{
+"name": "1",
+"matrix": 10,
+"dll": 2
+},
+{
+"name": "2",
+"matrix": 19,
+"dll": 3
+},
+{
+"name": "3",
+"matrix": 28,
+"dll": 4
+},
+{
+"name": "4",
+"matrix": 37,
+"dll": 5
+},
+{
+"name": "5",
+"matrix": 46,
+"dll": 6
+},
+{
+"name": "6",
+"matrix": 55,
+"dll": 7
+},
+{
+"name": "7",
+"matrix": 64,
+"dll": 8
+},
+{
+"name": "8",
+"matrix": 73,
+"dll": 9
+},
+{
+"name": "9",
+"matrix": 82,
+"dll": 10
+},
+{
+"name": "-",
+"matrix": 100,
+"dll": 12
+},
+{
+"name": "=",
+"matrix": 109,
+"dll": 13
+},
+{
+"name": "⭠",
+"matrix": 87,
+"dll": 15
+},
+{
+"name": "D1",
+"matrix": 71,
+"dll": 170
+},
+{
+"name": "D2",
+"matrix": 80,
+"dll": 171
+},
+{
+"name": "D3",
+"matrix": 89,
+"dll": 172
+},
+{
+"name": "D4",
+"matrix": 98,
+"dll": 173
+},
+{
+"name": "Num Lk",
+"matrix": 6,
+"dll": 90
+},
+{
+"name": "Num 0",
+"matrix": 78,
+"dll": 99
+},
+{
+"name": "Num 1",
+"matrix": 34,
+"dll": 93
+},
+{
+"name": "Num 2",
+"matrix": 42,
+"dll": 98
+},
+{
+"name": "Num 3",
+"matrix": 43,
+"dll": 103
+},
+{
+"name": "Num 4",
+"matrix": 51,
+"dll": 92
+},
+{
+"name": "Num 5",
+"matrix": 52,
+"dll": 97
+},
+{
+"name": "Num 6",
+"matrix": 60,
+"dll": 102
+},
+{
+"name": "Num 7",
+"matrix": 61,
+"dll": 91
+},
+{
+"name": "Num 8",
+"matrix": 69,
+"dll": 96
+},
+{
+"name": "Num 9",
+"matrix": 70,
+"dll": 101
+},
+{
+"name": "Num *",
+"matrix": 16,
+"dll": 100
+},
+{
+"name": "Num +",
+"matrix": 7,
+"dll": 106
+},
+{
+"name": "Num -",
+"matrix": 15,
+"dll": 105
+},
+{
+"name": "Num .",
+"matrix": 79,
+"dll": 104
+},
+{
+"name": "Num /",
+"matrix": 24,
+"dll": 95
+},
+{
+"name": "Num Enter",
+"matrix": 33,
+"dll": 108
+},
+{
+"name": "Tab",
+"matrix": 2,
+"dll": 16
+},
+{
+"name": "Q",
+"matrix": 11,
+"dll": 17
+},
+{
+"name": "W",
+"matrix": 20,
+"dll": 18
+},
+{
+"name": "E",
+"matrix": 29,
+"dll": 19
+},
+{
+"name": "R",
+"matrix": 38,
+"dll": 20
+},
+{
+"name": "T",
+"matrix": 47,
+"dll": 21
+},
+{
+"name": "Y",
+"matrix": 56,
+"dll": 22
+},
+{
+"name": "U",
+"matrix": 65,
+"dll": 23
+},
+{
+"name": "I",
+"matrix": 74,
+"dll": 24
+},
+{
+"name": "O",
+"matrix": 83,
+"dll": 25
+},
+{
+"name": "P",
+"matrix": 92,
+"dll": 26
+},
+{
+"name": "[",
+"matrix": 101,
+"dll": 27
+},
+{
+"name": "]",
+"matrix": 111,
+"dll": 28
+},
+{
+"name": "\\",
+"matrix": 119,
+"dll": 29
+},
+{
+"name": "Caps Lk",
+"matrix": 3,
+"dll": 30
+},
+{
+"name": "A",
+"matrix": 12,
+"dll": 31
+},
+{
+"name": "S",
+"matrix": 21,
+"dll": 32
+},
+{
+"name": "D",
+"matrix": 30,
+"dll": 33
+},
+{
+"name": "F",
+"matrix": 39,
+"dll": 34
+},
+{
+"name": "G",
+"matrix": 48,
+"dll": 35
+},
+{
+"name": "H",
+"matrix": 57,
+"dll": 36
+},
+{
+"name": "J",
+"matrix": 66,
+"dll": 37
+},
+{
+"name": "K",
+"matrix": 75,
+"dll": 38
+},
+{
+"name": "L",
+"matrix": 84,
+"dll": 39
+},
+{
+"name": ";",
+"matrix": 93,
+"dll": 40
+},
+{
+"name": "'",
+"matrix": 102,
+"dll": 41
+},
+{
+"name": "Enter",
+"matrix": 120,
+"dll": 43
+},
+{
+"name": "LShift",
+"matrix": 4,
+"dll": 44
+},
+{
+"name": "Z",
+"matrix": 22,
+"dll": 46
+},
+{
+"name": "X",
+"matrix": 31,
+"dll": 47
+},
+{
+"name": "C",
+"matrix": 40,
+"dll": 48
+},
+{
+"name": "V",
+"matrix": 49,
+"dll": 49
+},
+{
+"name": "B",
+"matrix": 58,
+"dll": 50
+},
+{
+"name": "N",
+"matrix": 67,
+"dll": 51
+},
+{
+"name": "M",
+"matrix": 76,
+"dll": 52
+},
+{
+"name": ",",
+"matrix": 85,
+"dll": 53
+},
+{
+"name": ".",
+"matrix": 94,
+"dll": 54
+},
+{
+"name": "/",
+"matrix": 103,
+"dll": 55
+},
+{
+"name": "RShift",
+"matrix": 121,
+"dll": 57
+},
+{
+"name": "LCtrl",
+"matrix": 5,
+"dll": 58
+},
+{
+"name": "LWin",
+"matrix": 14,
+"dll": 59
+},
+{
+"name": "Alt",
+"matrix": 23,
+"dll": 60
+},
+{
+"name": "Space",
+"matrix": 41,
+"dll": 61
+},
+{
+"name": "Alt Gr",
+"matrix": 68,
+"dll": 62
+},
+{
+"name": "RWin",
+"matrix": 77,
+"dll": 63
+},
+{
+"name": "Fn",
+"matrix": 86,
+"dll": 154
+},
+{
+"name": "RCtrl",
+"matrix": 95,
+"dll": 64
+}
+]

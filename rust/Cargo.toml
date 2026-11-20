@@ -1,0 +1,23 @@
+[package]
+name = "everest-basecamp"
+version = "1.0.0"
+edition = "2021"
+license = "MIT"
+repository = "https://github.com/AnnoyedDev/everest-max-linux"
+description = "Base Camp pour Linux : Mountain Everest Max (éclairage, touches, macros, touches écran, dock)"
+
+[[bin]]
+name = "everest"
+path = "src/main.rs"
+
+[dependencies]
+eframe = { version = "0.37", default-features = false, features = ["default_fonts", "glow", "wayland", "x11"] }
+image = { version = "0.25.10", default-features = false, features = ["png", "jpeg", "gif", "bmp", "webp"] }
+ab_glyph = "0.2.32"
+resvg = { version = "0.50", default-features = false }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+libc = "0.2"
+
+[profile.release]
+opt-level = 3

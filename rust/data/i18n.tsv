@@ -1,0 +1,355 @@
+Multimédia	Media	メディア
+Souris	Mouse	マウス
+Profils	Profiles	プロファイル
+Système	System	システム
+Touches F13–F24	F13–F24 keys	F13〜F24キー
+Autres	Other	その他
+aucune touche détectée	no key detected	キーが検出されませんでした
+F{}	F{}	F{}
+{} — terminé	{} — done	{} — 完了しました
+Lecture du clavier	Reading the keyboard	キーボードを読み込み中
+Il faut au moins un profil actif	At least one profile must stay active	有効なプロファイルは最低ひとつ必要です
+Profil {} activé	Profile {} enabled	プロファイル {} を有効にしました
+Profil {} désactivé	Profile {} disabled	プロファイル {} を無効にしました
+BASE CAMP · LINUX	BASE CAMP · LINUX	BASE CAMP · LINUX
+Clavier connecté	Keyboard connected	キーボード接続中
+Clavier absent	Keyboard not found	キーボードが見つかりません
+Service actif	Service running	サービス稼働中
+Service arrêté	Service stopped	サービス停止中
+PROFIL	PROFILE	プロファイル
+Actif sur le clavier — clic droit pour désactiver	Enabled on the keyboard — right-click to disable	キーボードで有効です — 右クリックで無効にできます
+Désactivé sur le clavier — clic droit pour activer	Disabled on the keyboard — right-click to enable	キーボードで無効です — 右クリックで有効にできます
+Désactiver sur le clavier	Disable on the keyboard	キーボードで無効にする
+Activer sur le clavier	Enable on the keyboard	キーボードで有効にする
+Prêt	Ready	準備OKです
+{} en attente	{} queued	あと {} 件待ち
+Éclairage	Lighting	ライティング
+Effets intégrés au clavier, effets animés par l'ordinateur et dessin touche par touche.	Built-in keyboard effects, computer-driven animations and per-key painting.	キーボード内蔵のエフェクト、PCで動かすアニメーション、キーごとのペイントができます。
+Cet effet est animé par le service, qui est arrêté. Démarre-le dans Système.	This effect is animated by the service, which is stopped. Start it in System.	このエフェクトはサービスで動かしますが、いまは停止中です。「システム」から起動してくださいね。
+Dessin — clique ou glisse sur les touches	Painting — click or drag over the keys	ペイント — キーをクリックするかドラッグしてください
+Aperçu en direct	Live preview	ライブプレビュー
+Gomme	Eraser	消しゴム
+Tout remplir	Fill all	全部塗る
+Tout effacer	Clear all	全部消す
+Effet	Effect	エフェクト
+Intégrés au clavier — marchent sans l'ordinateur	Built into the keyboard — work without the computer	キーボード内蔵 — PCがなくても動きます
+Animés par l'ordinateur — le service doit tourner	Animated by the computer — the service must be running	PCで動かすエフェクト — サービスの起動が必要です
+Réglages	Settings	設定
+Luminosité	Brightness	明るさ
+Arc-en-ciel	Rainbow	レインボー
+Couleurs	Colors	カラー
+Couleur 2	Color 2	カラー2
+Fond	Background	背景
+Vitesse	Speed	スピード
+Vers la droite	To the right	右へ
+Vers la gauche	To the left	左へ
+Vers le bas	Downwards	下へ
+Vers le haut	Upwards	上へ
+Sens horaire	Clockwise	時計回り
+Sens antihoraire	Counter-clockwise	反時計回り
+Sens	Direction	向き
+Écouter	Listen to	聴く音
+Tous les sons (sortie par défaut)	All sounds (default output)	すべての音（デフォルト出力）
+Sorties	Outputs	出力
+Entrées	Inputs	入力
+Interface {}, 100 % = {} Mbit/s — réglable dans Dock média	Interface {}, 100 % = {} Mbit/s — adjustable in Media dock	インターフェース {}、100 % = {} Mbit/s — 「メディアドック」で変更できます
+Mémoriser dans le clavier	Save to the keyboard	キーボードに保存する
+Appliquer	Apply	適用
+Par défaut	Default	デフォルト
+Désactivée	Disabled	無効
+Autre touche	Other key	別のキー
+Raccourci	Shortcut	ショートカット
+Fonction	Function	機能
+Macro	Macro	マクロ
+{} : cette fonction remplace l'action ordinateur	{}: this function replaces the computer action	{}：この機能がPCアクションの代わりになります
+Envoie la touche	Sends the key	送るキー
+Maj	Shift	Shift
+Lecture	Playback	再生
+Une fois	Once	1回だけ
+Tant que maintenue	While held	押している間
+En boucle	Loop	ループ
+Aucun événement — ajoute des touches ci-dessous.	No events yet — add keys below.	まだイベントがありません — 下からキーを追加しましょう。
+Clic gauche	Left click	左クリック
+Clic droit	Right click	右クリック
+Clic milieu	Middle click	中クリック
+Molette ↑	Wheel ↑	ホイール ↑
+Molette ↓	Wheel ↓	ホイール ↓
+▼ appui	▼ press	▼ 押す
+▲ relâche	▲ release	▲ 離す
+Touche (appui + relâche)	Key (press + release)	キー（押す＋離す）
+Événement	Event	イベント
+Touches & macros	Keys & macros	キー＆マクロ
+Remappage, raccourcis, fonctions et macros stockés dans le clavier : ils marchent partout, même sans ce logiciel.	Remapping, shortcuts, functions and macros stored in the keyboard: they work everywhere, even without this app.	リマップ・ショートカット・機能・マクロはキーボード本体に保存されるので、このアプリがなくてもどこでも使えます。
+Clavier — clique une touche	Keyboard — click a key	キーボード — キーをクリックしてください
+Action ordinateur	Computer action	PCアクション
+Fonction de la touche {}	Function of key {}	キー {} の機能
+Fonction de la touche	Key function	キーの機能
+Sélectionne une touche sur le clavier ci-dessus.	Pick a key on the keyboard above.	上のキーボードからキーを選んでくださいね。
+Cette touche écran a une action ordinateur (onglet Touches écran). Choisir une fonction ici la remplacera.	This display key has a computer action (Display keys tab). Choosing a function here will replace it.	このディスプレイキーにはPCアクションが設定されています（「ディスプレイキー」タブ）。ここで機能を選ぶと置き換わります。
+Envoyer cette touche	Send this key	このキーを送信
+Touche {}	Key {}	キー {}
+Envoyer toutes les touches	Send all keys	全キーを送信
+Toutes les touches	All keys	全キー
+Aucune	None	なし
+Lancer un programme	Launch a program	プログラムを起動
+Ouvrir un site	Open a website	サイトを開く
+Ouvrir un dossier	Open a folder	フォルダを開く
+Jouer un son	Play a sound	サウンドを再生
+Raccourci clavier	Keyboard shortcut	キーボードショートカット
+Appuyer une touche	Press a key	キーを押す
+Relâcher une touche	Release a key	キーを離す
+Attendre	Wait	待つ
+Plusieurs actions	Multiple actions	複数のアクション
+Parcourir…	Browse…	参照…
+Dossier	Folder	フォルダ
+Fichier son	Sound file	サウンドファイル
+Sortie par défaut	Default output	デフォルト出力
+Verrouiller	Lock	ロック
+Veille	Sleep	スリープ
+Hibernation	Hibernate	休止状態
+Déconnexion	Log out	ログアウト
+Redémarrer	Restart	再起動
+Éteindre	Shut down	シャットダウン
+Ajouter une étape	Add a step	ステップを追加
+Touche D{}	Key D{}	キー D{}
+Icône	Icon	アイコン
+Image	Image	画像
+Texte	Text	テキスト
+Image de la touche	Key image	キーの画像
+Encre	Ink	文字色
+Grille	Grid	グリッド
+Envoyer au clavier	Send to keyboard	キーボードに送信
+Image D{}	Image D{}	画像 D{}
+ACTION AU APPUI	ACTION ON PRESS	押したときのアクション
+{} : frappe d'origine coupée	{}: original keystroke disabled	{}：元のキー入力をオフにしました
+{} : F{} rétablie	{}: F{} restored	{}：F{} に戻しました
+Tester l'action	Test the action	アクションをテスト
+Touches écran	Display keys	ディスプレイキー
+Les 4 écrans du pavé (72×72) : icône, image ou texte, et une action exécutée par l'ordinateur.	The 4 numpad screens (72×72): icon, image or text, plus an action run by the computer.	テンキーの4つの画面（72×72）：アイコン・画像・テキストと、PCで動くアクションを設定できます。
+Le service est arrêté : les actions ne se déclencheront pas.	The service is stopped: actions won't trigger.	サービスが停止中なので、アクションは動きません。
+Démarrer le service	Start the service	サービスを起動
+Service démarré	Service started	サービスを起動しました
+Service : {}	Service: {}	サービス：{}
+BIBLIOTHÈQUE D'ICÔNES — D{}	ICON LIBRARY — D{}	アイコンライブラリ — D{}
+Dock média	Media dock	メディアドック
+Le module à gauche du clavier : écran rond, molette et touches média.	The module on the left of the keyboard: round screen, dial and media keys.	キーボード左側のモジュールです：丸い画面、ダイヤル、メディアキー。
+Écran de veille	Screensaver	スクリーンセーバー
+L'écran rond affiche ce visuel quand le dock reste inactif. Pour voir ton image, choisis le type « Image » puis applique.	The round screen shows this when the dock is idle. To see your image, pick the “Image” type and apply.	ドックを使っていないとき、丸い画面にこれが表示されます。自分の画像を見たいときは、タイプを「画像」にして適用してくださいね。
+Choisir une image…	Choose an image…	画像を選ぶ…
+Image du dock	Dock image	ドックの画像
+Envoyer l'image	Send the image	画像を送信
+Lecture des réglages du dock…	Reading dock settings…	ドックの設定を読み込み中…
+Activer l'écran de veille	Enable the screensaver	スクリーンセーバーを有効にする
+Affiche	Shows	表示
+Après	After	開始まで
+Extinction	Turn off	画面オフ
+Menus de la molette	Dial menus	ダイヤルのメニュー
+Appliquer au dock	Apply to dock	ドックに適用
+Réglages du dock	Dock settings	ドックの設定
+Données envoyées par le service	Data sent by the service	サービスが送るデータ
+Heure	Time	時刻
+Volume du système	System volume	システム音量
+PC info : CPU, GPU, disque, internet, RAM, APM	PC info: CPU, GPU, disk, internet, RAM, APM	PC情報：CPU・GPU・ディスク・ネット・RAM・APM
+Internet (le dock affiche 0–100 %)	Internet (the dock shows 0–100 %)	ネット（ドックの表示は0〜100 %）
+{} — {} Mbit/s	{} — {} Mbit/s	{} — {} Mbit/s
+Automatique ({})	Automatic ({})	自動（{}）
+Réception	Download	受信
+Émission	Upload	送信
+Le plus haut	Highest	大きいほう
+Plafond manuel	Manual cap	上限を手動で設定
+100 % = vitesse du lien ({})	100 % = link speed ({})	100 % = リンク速度（{}）
+Mettre à l'heure maintenant	Sync the clock now	今すぐ時刻を合わせる
+Horloge	Clock	時計
+Relire les réglages du clavier	Re-read keyboard settings	キーボードの設定を読み直す
+Corriger	Fix	修正
+Configuration terminée	Setup complete	セットアップが完了しました
+Installation, service d'arrière-plan et touches à action ordinateur.	Installation, background service and computer-action keys.	インストール、バックグラウンドサービス、PCアクション用のキーです。
+État de l'installation	Installation status	インストールの状態
+Configuration en cours…	Setting up…	セットアップ中…
+Tout corriger	Fix everything	まとめて修正
+Revérifier	Check again	もう一度チェック
+Service	Service	サービス
+Actif — exécute les actions et synchronise le dock	Running — runs actions and syncs the dock	稼働中 — アクションの実行とドックの同期をしています
+Arrêté	Stopped	停止中
+Installer / redémarrer	Install / restart	インストール／再起動
+Arrêter	Stop	停止
+Profils du clavier	Keyboard profiles	キーボードのプロファイル
+Les profils actifs défilent avec la touche profil du clavier.	Active profiles cycle with the keyboard's profile key.	有効なプロファイルは、キーボードのプロファイルキーで切り替わります。
+Lecture du clavier…	Reading the keyboard…	キーボードを読み込み中…
+Icônes PNG	PNG icons	PNGアイコン
+{} icônes 72×72 prêtes pour les touches écran.	{} ready-made 72×72 icons for the display keys.	ディスプレイキー用の72×72アイコンが {} 個あります。
+Exporter et ouvrir le dossier	Export and open the folder	書き出してフォルダを開く
+{} icônes dans {}	{} icons in {}	{} 個のアイコンを {} に保存しました
+Autres touches à action ordinateur	Other computer-action keys	そのほかのPCアクションキー
+Apprends une touche puis donne-lui une action. Désactive-la dans « Touches & macros » pour couper sa frappe.	Learn a key, then give it an action. Disable it in “Keys & macros” to stop its keystroke.	キーを覚えさせてからアクションを設定しましょう。元の入力を止めたいときは「キー＆マクロ」で無効にしてくださいね。
+Touche {}.{}	Key {}.{}	キー {}.{}
+Appuie sur la touche…	Press the key…	キーを押してください…
+Apprendre une touche	Learn a key	キーを覚えさせる
+L'application est en version {}.	The app is version {}.	アプリのバージョンは {} です。
+Mise à jour en cours…	Updating…	アップデート中…
+Ne pas mettre à jour	Don't update	アップデートしない
+Sans mise à jour, certaines fonctions de cette application peuvent ne pas marcher (effets animés, dock, touches écran), et l'ancien service peut écrire des réglages incompatibles et corrompre ta configuration.	Without updating, some features of this app may not work (animated effects, dock, display keys), and the old service may write incompatible settings and corrupt your configuration.	アップデートしないと、一部の機能（アニメーション、ドック、ディスプレイキー）が動かないかもしれません。古いサービスが互換性のない設定を書き込んで、設定が壊れてしまうこともあります。
+Continuer sans mettre à jour	Continue without updating	アップデートせずに続ける
+Service non mis à jour	Service not updated	サービスはアップデートされていません
+Finalement, mettre à jour	Update after all	やっぱりアップデートする
+CONFIGURATION INITIALE	INITIAL SETUP	初期セットアップ
+Quelques éléments manquent pour que tout fonctionne. Je peux m'en occuper ; le mot de passe administrateur est demandé une seule fois, pour la règle udev.	A few things are missing for everything to work. I can take care of them; the administrator password is asked only once, for the udev rule.	すべて動かすには、いくつか足りないものがあります。こちらで用意できますよ。管理者パスワードはudevルールのために一度だけ聞かれます。
+Tout configurer	Set everything up	まとめてセットアップ
+Plus tard	Later	あとで
+Ne plus demander	Don't ask again	次から表示しない
+Sauvegarde : {}	Save: {}	保存：{}
+ancienne copie remplacée sur le disque, encore en mémoire	old copy replaced on disk, still in memory	ディスク上では置き換え済みですが、古いコピーがまだメモリで動いています
+version {}, compilation différente	version {}, different build	バージョン {}（別のビルド）
+version antérieure à 0.2.0	a version older than 0.2.0	0.2.0より前のバージョン
+Clavier	Keyboard	キーボード
+Everest Max connecté	Everest Max connected	Everest Max 接続中
+Clavier détecté mais accès refusé	Keyboard found but access denied	キーボードは見つかりましたが、アクセスが拒否されました
+Clavier non détecté — vérifie le câble	Keyboard not detected — check the cable	キーボードが見つかりません — ケーブルを確認してくださいね
+Règle udev	udev rule	udevルール
+Accès au clavier autorisé	Keyboard access granted	キーボードへのアクセスOKです
+Absente ou ancienne version (mot de passe administrateur requis)	Missing or outdated (administrator password required)	ないか古いバージョンです（管理者パスワードが必要です）
+Clavier virtuel	Virtual keyboard	仮想キーボード
+Raccourcis et macros des touches écran disponibles	Display key shortcuts and macros available	ディスプレイキーのショートカットとマクロが使えます
+/dev/uinput inaccessible (module ou permission)	/dev/uinput unavailable (module or permission)	/dev/uinput にアクセスできません（モジュールか権限）
+Programme installé	Program installed	プログラムのインストール
+Copier vers {}	Copy to {}	{} にコピーします
+Raccourci d'application	App shortcut	アプリのショートカット
+Présent dans le menu des applications	Present in the application menu	アプリメニューにあります
+Absent du menu des applications	Missing from the application menu	アプリメニューにありません
+Actif, démarre à la connexion	Running, starts at login	稼働中・ログイン時に起動します
+Actif mais lancé depuis une ancienne copie — à mettre à jour	Running from an old copy — needs updating	古いコピーで動いています — アップデートしましょう
+Arrêté ou non installé — les actions des touches écran ne marchent pas	Stopped or not installed — display key actions won't work	停止中か未インストールです — ディスプレイキーのアクションが動きません
+Frappe d'origine coupée sur les touches qui ont une action	Original keystroke disabled on keys with an action	アクション付きのキーは元の入力をオフにしています
+Une touche avec action tape encore sa touche d'origine	A key with an action still sends its original keystroke	アクション付きのキーが、まだ元のキーも入力しています
+installation administrateur annulée ou refusée	administrator installation cancelled or denied	管理者としてのインストールがキャンセルか拒否されました
+icône	icon	アイコン
+systemctl --user a échoué	systemctl --user failed	systemctl --user が失敗しました
+branche le clavier	plug in the keyboard	キーボードをつないでください
+Everest Max introuvable (branché ? règle udev installée ?)	Everest Max not found (plugged in? udev rule installed?)	Everest Max が見つかりません（接続とudevルールを確認してくださいね）
+{}: {} — installez 70-mountain-everest.rules	{}: {} — install 70-mountain-everest.rules	{}：{} — 70-mountain-everest.rules をインストールしてください
+écriture: {}	write: {}	書き込み：{}
+commande {} {} refusée par le clavier	command {} {} rejected by the keyboard	コマンド {} {} がキーボードに拒否されました
+pas de réponse à {} {}	no reply to {} {}	{} {} に応答がありません
+feature report: {}	feature report: {}	フィーチャーレポート：{}
+cible d'image invalide	invalid image target	画像の送り先が正しくありません
+image de {} octets, {}×{} attendu	image of {} bytes, expected {}×{}	画像が {} バイトです（{}×{} が必要です）
+le clavier refuse le mode transfert	the keyboard refuses transfer mode	キーボードが転送モードを拒否しました
+pas de réponse au mode transfert	no reply to transfer mode	転送モードに応答がありません
+début de transfert refusé	transfer start rejected	転送の開始が拒否されました
+début de transfert sans réponse	no reply to transfer start	転送の開始に応答がありません
+somme de contrôle refusée	checksum rejected	チェックサムが拒否されました
+décalage du transfert	transfer out of sync	転送がずれてしまいました
+bloc refusé	block rejected	ブロックが拒否されました
+bloc {} : pas d'acquittement	block {}: no acknowledgement	ブロック {}：確認応答がありません
+touche inconnue : {}	unknown key: {}	不明なキー：{}
+/dev/uinput: {} (règle udev)	/dev/uinput: {} (udev rule)	/dev/uinput：{}（udevルール）
+aucune police trouvée (fc-match)	no font found (fc-match)	フォントが見つかりません（fc-match）
+Statique	Static	スタティック
+Vague	Wave	ウェーブ
+Tornade	Tornado	トルネード
+Respiration	Breathing	ブリージング
+Réactif	Reactive	リアクティブ
+Matrix	Matrix	マトリックス
+Personnalisé	Custom	カスタム
+Yeti	Yeti	イエティ
+Éteint	Off	オフ
+Dégradé	Gradient	グラデーション
+Aurore	Aurora	オーロラ
+Feu	Fire	ファイア
+Pluie	Rain	レイン
+Étoiles	Stars	スター
+Spectre audio	Audio spectrum	オーディオスペクトラム
+Pulsation audio	Audio pulse	オーディオパルス
+Charge CPU	CPU load	CPU負荷
+Charge GPU	GPU load	GPU負荷
+Charge RAM	RAM load	RAM使用率
+Charge internet	Internet load	ネット負荷
+Lecture/Pause	Play/Pause	再生／一時停止
+Pause	Pause	一時停止
+Stop	Stop	停止
+Suivant	Next	次へ
+Précédent	Previous	前へ
+Volume +	Volume +	音量 +
+Volume −	Volume −	音量 −
+Muet	Mute	ミュート
+Micro	Mic	マイク
+Micro coupé	Mic muted	マイクオフ
+Casque	Headphones	ヘッドホン
+Musique	Music	音楽
+Enregistrer	Record	録画
+Live	Live	ライブ
+Caméra	Camera	カメラ
+Caméra coupée	Camera off	カメラオフ
+Photo	Photo	写真
+Capture	Screenshot	スクショ
+Terminal	Terminal	ターミナル
+Navigateur	Browser	ブラウザ
+Accueil	Home	ホーム
+Mail	Mail	メール
+Discussion	Chat	チャット
+Code	Code	コード
+Calculatrice	Calculator	電卓
+Jeu	Game	ゲーム
+Minuteur	Timer	タイマー
+Copier	Copy	コピー
+Coller	Paste	貼り付け
+Couper	Cut	切り取り
+Annuler	Undo	元に戻す
+Rétablir	Redo	やり直す
+Rechercher	Search	検索
+Zoom +	Zoom +	ズーム +
+Zoom −	Zoom −	ズーム −
+Enregistrer fichier	Save file	ファイル保存
+Favori	Favorite	お気に入り
+Cœur	Heart	ハート
+Notification	Notification	通知
+Corbeille	Trash	ゴミ箱
+Lumière	Light	ライト
+Wi-Fi	Wi-Fi	Wi-Fi
+Bluetooth	Bluetooth	Bluetooth
+Cloud	Cloud	クラウド
+Télécharger	Download	ダウンロード
+Envoyer	Send	送信
+Lien	Link	リンク
+Pause café	Coffee break	コーヒー休憩
+Sourire	Smile	スマイル
+Vue	View	表示
+Cible	Target	ターゲット
+Drapeau	Flag	フラグ
+Lieu	Place	場所
+Batterie	Battery	バッテリー
+Multi	Multi	マルチ
+Écran	Screen	画面
+Haut	Up	上
+Bas	Down	下
+Gauche	Left	左
+Droite	Right	右
+Horloge (variante)	Clock (alt)	時計（別デザイン）
+Chronomètre	Stopwatch	ストップウォッチ
+Volume	Volume	音量
+PC info — CPU	PC info — CPU	PC情報 — CPU
+PC info — GPU	PC info — GPU	PC情報 — GPU
+PC info — disque	PC info — disk	PC情報 — ディスク
+PC info — RAM	PC info — RAM	PC情報 — RAM
+PC info — internet	PC info — internet	PC情報 — ネット
+APM	APM	APM
+Profil	Profile	プロファイル
+PC info	PC info	PC情報
+Impr	PrtSc	PrtSc
+Défil	ScrLk	ScrLk
+Orig	Home	Home
+Suppr	Del	Del
+Fin	End	End
+Entrée	Enter	Enter
+Espace	Space	Space
+MISE À JOUR DU PROGRAMME	PROGRAM UPDATE	プログラムのアップデート
+Version installée : {}.	Installed version: {}.	インストール済みのバージョン：{}。
+Veux-tu remplacer le programme installé dans ~/.local/bin (celui du menu des applications) par cette version ? Le service sera redémarré s'il tourne. Quelques secondes, sans mot de passe.	Replace the program installed in ~/.local/bin (the one in the application menu) with this version? The service will be restarted if it is running. A few seconds, no password.	~/.local/bin にインストールされているプログラム（アプリメニューのもの）を、このバージョンに置き換えますか？サービスが動いていれば再起動します。数秒で終わって、パスワードも不要です。
+Remplacer et mettre à jour	Replace and update	置き換えてアップデート
+
+
+AUTRES LANGUES	OTHER LANGUAGES	ほかの言語
+Aidez-moi à traduire ce logiciel dans d'autres langues ! Rendez-vous sur GitHub !	Help me translate this software into other languages! See you on GitHub!	このソフトをほかの言語に翻訳するのを手伝ってください！GitHubで待っていますね！
+Texte (facultatif, s'affiche sous l'icône)	Text (optional, shown under the icon)	テキスト（任意・アイコンの下に表示されます）
+Rechercher…	Search…	検索…
+Ouvrir GitHub	Open GitHub	GitHubを開く

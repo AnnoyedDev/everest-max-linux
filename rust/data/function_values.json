@@ -1,0 +1,1597 @@
+[
+{
+"kind": 10,
+"hex": "",
+"value": 0,
+"group": "OS Commands",
+"label": "Run task manager"
+},
+{
+"kind": 10,
+"hex": "",
+"value": 195,
+"group": "OS Commands",
+"label": "Calculator"
+},
+{
+"kind": 10,
+"hex": "",
+"value": 0,
+"group": "OS Commands",
+"label": "Run explorer"
+},
+{
+"kind": 10,
+"hex": "",
+"value": 0,
+"group": "OS Commands",
+"label": "Lock computer"
+},
+{
+"kind": 10,
+"hex": "0x01",
+"value": 128,
+"group": "OS Commands",
+"label": "Shutdown"
+},
+{
+"kind": 10,
+"hex": "0x02",
+"value": 129,
+"group": "OS Commands",
+"label": "Sleep"
+},
+{
+"kind": 10,
+"hex": "",
+"value": 129,
+"group": "OS Commands",
+"label": "Hibernate"
+},
+{
+"kind": 3,
+"hex": "0x04",
+"value": 183,
+"group": "Media",
+"label": "Play/Pause"
+},
+{
+"kind": 3,
+"hex": "0x07",
+"value": 182,
+"group": "Media",
+"label": "Stop"
+},
+{
+"kind": 3,
+"hex": "0x05",
+"value": 181,
+"group": "Media",
+"label": "Previous track"
+},
+{
+"kind": 3,
+"hex": "0x06",
+"value": 180,
+"group": "Media",
+"label": "Next track"
+},
+{
+"kind": 3,
+"hex": "0x01",
+"value": 187,
+"group": "Media",
+"label": "Volume up"
+},
+{
+"kind": 3,
+"hex": "0x02",
+"value": 188,
+"group": "Media",
+"label": "Volume down"
+},
+{
+"kind": 3,
+"hex": "0x03",
+"value": 184,
+"group": "Media",
+"label": "Mute"
+},
+{
+"kind": 2,
+"hex": "0x101 ",
+"value": 257,
+"group": "Mouse",
+"label": "Left button"
+},
+{
+"kind": 2,
+"hex": "0x102",
+"value": 258,
+"group": "Mouse",
+"label": "Right button"
+},
+{
+"kind": 2,
+"hex": "0x103",
+"value": 259,
+"group": "Mouse",
+"label": "Middle button"
+},
+{
+"kind": 2,
+"hex": "0x104",
+"value": 260,
+"group": "Mouse",
+"label": "Forward"
+},
+{
+"kind": 2,
+"hex": "0x105",
+"value": 261,
+"group": "Mouse",
+"label": "Backward"
+},
+{
+"kind": 2,
+"hex": "0x130",
+"value": 304,
+"group": "Mouse",
+"label": "Scroll up"
+},
+{
+"kind": 2,
+"hex": "0x131",
+"value": 305,
+"group": "Mouse",
+"label": "Scroll down"
+},
+{
+"kind": 5,
+"hex": "",
+"value": 0,
+"group": "Mouse",
+"label": "Scroll left"
+},
+{
+"kind": 5,
+"hex": "",
+"value": 0,
+"group": "Mouse",
+"label": "Scroll right"
+},
+{
+"kind": 1,
+"hex": "0xa0",
+"value": 160,
+"group": "Profile",
+"label": "Profile 1"
+},
+{
+"kind": 1,
+"hex": "0xa1",
+"value": 161,
+"group": "Profile",
+"label": "Profile 2"
+},
+{
+"kind": 1,
+"hex": "0xa2",
+"value": 162,
+"group": "Profile",
+"label": "Profile 3"
+},
+{
+"kind": 1,
+"hex": "0xa3",
+"value": 163,
+"group": "Profile",
+"label": "Profile 4"
+},
+{
+"kind": 1,
+"hex": "0xa4",
+"value": 164,
+"group": "Profile",
+"label": "Profile 5"
+},
+{
+"kind": 1,
+"hex": "0xd2",
+"value": 210,
+"group": "Profile",
+"label": "Profile Cycle"
+},
+{
+"kind": 1,
+"hex": "0xd3",
+"value": 211,
+"group": "Profile",
+"label": "Previous Profile"
+},
+{
+"kind": 1,
+"hex": "0xd4",
+"value": 212,
+"group": "Profile",
+"label": "Next Profile"
+},
+{
+"kind": 1,
+"value": 230,
+"group": "Keyboard Shortcuts",
+"label": "F13"
+},
+{
+"kind": 1,
+"value": 231,
+"group": "Keyboard Shortcuts",
+"label": "F14"
+},
+{
+"kind": 1,
+"value": 232,
+"group": "Keyboard Shortcuts",
+"label": "F15"
+},
+{
+"kind": 1,
+"value": 233,
+"group": "Keyboard Shortcuts",
+"label": "F16"
+},
+{
+"kind": 1,
+"value": 234,
+"group": "Keyboard Shortcuts",
+"label": "F17"
+},
+{
+"kind": 1,
+"value": 235,
+"group": "Keyboard Shortcuts",
+"label": "F18"
+},
+{
+"kind": 1,
+"value": 236,
+"group": "Keyboard Shortcuts",
+"label": "F19"
+},
+{
+"kind": 1,
+"value": 237,
+"group": "Keyboard Shortcuts",
+"label": "F20"
+},
+{
+"kind": 1,
+"value": 238,
+"group": "Keyboard Shortcuts",
+"label": "F21"
+},
+{
+"kind": 1,
+"value": 239,
+"group": "Keyboard Shortcuts",
+"label": "F22"
+},
+{
+"kind": 1,
+"value": 240,
+"group": "Keyboard Shortcuts",
+"label": "F23"
+},
+{
+"kind": 1,
+"value": 241,
+"group": "Keyboard Shortcuts",
+"label": "F24"
+},
+{
+"kind": 1,
+"value": 230,
+"group": "Hotkey Switch",
+"label": "F13"
+},
+{
+"kind": 1,
+"value": 231,
+"group": "Hotkey Switch",
+"label": "F14"
+},
+{
+"kind": 1,
+"value": 232,
+"group": "Hotkey Switch",
+"label": "F15"
+},
+{
+"kind": 1,
+"value": 233,
+"group": "Hotkey Switch",
+"label": "F16"
+},
+{
+"kind": 1,
+"value": 234,
+"group": "Hotkey Switch",
+"label": "F17"
+},
+{
+"kind": 1,
+"value": 235,
+"group": "Hotkey Switch",
+"label": "F18"
+},
+{
+"kind": 1,
+"value": 236,
+"group": "Hotkey Switch",
+"label": "F19"
+},
+{
+"kind": 1,
+"value": 237,
+"group": "Hotkey Switch",
+"label": "F20"
+},
+{
+"kind": 1,
+"value": 238,
+"group": "Hotkey Switch",
+"label": "F21"
+},
+{
+"kind": 1,
+"value": 239,
+"group": "Hotkey Switch",
+"label": "F22"
+},
+{
+"kind": 1,
+"value": 240,
+"group": "Hotkey Switch",
+"label": "F23"
+},
+{
+"kind": 1,
+"value": 241,
+"group": "Hotkey Switch",
+"label": "F24"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Adobe",
+"label": "Illustrator"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Adobe",
+"label": "Premiere-pro"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Adobe",
+"label": "Photoshop"
+},
+{
+"kind": 1,
+"hex": "",
+"value": 0,
+"group": "DaVinci",
+"label": "File"
+},
+{
+"kind": 1,
+"hex": "",
+"value": 0,
+"group": "DaVinci",
+"label": "Marking"
+},
+{
+"kind": 1,
+"hex": "",
+"value": 0,
+"group": "DaVinci",
+"label": "Playback"
+},
+{
+"kind": 1,
+"hex": "",
+"value": 0,
+"group": "DaVinci",
+"label": "Editing"
+},
+{
+"kind": 1,
+"hex": "",
+"value": 0,
+"group": "DaVinci",
+"label": "Effects"
+},
+{
+"kind": 1,
+"hex": "",
+"value": 0,
+"group": "DaVinci",
+"label": "General"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Profile"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Scene"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Source"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Transition"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Volume"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Streaming"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Recording"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Studio Mode"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Reply Buffer"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Media"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Additional Features"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Twitch",
+"label": "Chat Message"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Twitch",
+"label": "Play Ad"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Twitch",
+"label": "Stream Title / Game"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Twitch",
+"label": "Sub Chat"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Twitch",
+"label": "Slow Chat"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Twitch",
+"label": "Followers Chat"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Twitch",
+"label": "Emote Chat"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Twitch",
+"label": "Create Stream Marker"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Twitch",
+"label": "Clear Chat"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Twitch",
+"label": "Create Clip"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Twitch",
+"label": "Open Last Clip"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Youtube",
+"label": "Chat Message"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Play/Pause"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Previous track"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Next Track"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Change Playback Device"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Liked Song Toggle"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Play URI"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Playlist Start"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Remove Song From Playlist"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Repeat Mode"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Save Song To Playlist"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Shuffle Mode"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Song Info"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Volume up"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Volume down"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Volume Mute/Unmute"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Spotify",
+"label": "Volume Set"
+},
+{
+"kind": 0,
+"value": 0,
+"group": "Play Ad",
+"label": ""
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Play Ad",
+"label": "30"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Play Ad",
+"label": "60"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Play Ad",
+"label": "90"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Play Ad",
+"label": "120"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Play Ad",
+"label": "150"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Play Ad",
+"label": "180"
+},
+{
+"kind": 0,
+"value": 0,
+"group": "Slow Chat",
+"label": ""
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Slow Chat",
+"label": "1"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Slow Chat",
+"label": "3"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Slow Chat",
+"label": "5"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Slow Chat",
+"label": "10"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Slow Chat",
+"label": "15"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Slow Chat",
+"label": "30"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Slow Chat",
+"label": "60"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Slow Chat",
+"label": "120"
+},
+{
+"kind": 0,
+"value": 0,
+"group": "Followers Chat",
+"label": ""
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Followers Chat",
+"label": "0 Minute"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Followers Chat",
+"label": "10 Minutes"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Followers Chat",
+"label": "30 Minutes"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Followers Chat",
+"label": "1 Hour"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Followers Chat",
+"label": "1 Day"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Followers Chat",
+"label": "1 Week"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Followers Chat",
+"label": "1 Month"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Followers Chat",
+"label": "3 Months"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + F1"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + F2"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + V"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + A"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + M"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + S"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + Shift + S"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + T"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + R"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + C"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + P"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + N"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + F"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + H"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + U"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + I"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + Y"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + Shift + R"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + Shift + G"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Ctrl + Alt + Shift + H"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Zoom",
+"label": "Alt + Q"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "OS Commands"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "Run browser"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "Run Program"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "Open Folder"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "Media"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "Keyboard Shortcuts"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "Mouse"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "Delay"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "OBS"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "Twitch"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "Youtube"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "Spotify"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "Adobe"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "DaVinci"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "Multi Action",
+"label": "Zoom"
+},
+{
+"kind": 10,
+"hex": "",
+"value": 0,
+"group": "OS Commands",
+"label": "Run task manager"
+},
+{
+"kind": 10,
+"hex": "",
+"value": 195,
+"group": "OS Commands",
+"label": "Calculator"
+},
+{
+"kind": 10,
+"hex": "",
+"value": 0,
+"group": "OS Commands",
+"label": "Run explorer"
+},
+{
+"kind": 10,
+"hex": "",
+"value": 0,
+"group": "OS Commands",
+"label": "Lock computer"
+},
+{
+"kind": 10,
+"hex": "0x01",
+"value": 128,
+"group": "OS Commands",
+"label": "Shutdown"
+},
+{
+"kind": 10,
+"hex": "0x02",
+"value": 129,
+"group": "OS Commands",
+"label": "Sleep"
+},
+{
+"kind": 10,
+"hex": "",
+"value": 129,
+"group": "OS Commands",
+"label": "Hibernate"
+},
+{
+"kind": 3,
+"hex": "0x04",
+"value": 183,
+"group": "Media",
+"label": "Play/Pause"
+},
+{
+"kind": 3,
+"hex": "0x07",
+"value": 182,
+"group": "Media",
+"label": "Stop"
+},
+{
+"kind": 3,
+"hex": "0x05",
+"value": 181,
+"group": "Media",
+"label": "Previous track"
+},
+{
+"kind": 3,
+"hex": "0x06",
+"value": 180,
+"group": "Media",
+"label": "Next track"
+},
+{
+"kind": 3,
+"hex": "0x01",
+"value": 187,
+"group": "Media",
+"label": "Volume up"
+},
+{
+"kind": 3,
+"hex": "0x02",
+"value": 188,
+"group": "Media",
+"label": "Volume down"
+},
+{
+"kind": 3,
+"hex": "0x03",
+"value": 184,
+"group": "Media",
+"label": "Mute"
+},
+{
+"kind": 2,
+"hex": "0x101 ",
+"value": 257,
+"group": "Mouse",
+"label": "Left button"
+},
+{
+"kind": 2,
+"hex": "0x102",
+"value": 258,
+"group": "Mouse",
+"label": "Right button"
+},
+{
+"kind": 2,
+"hex": "0x103",
+"value": 259,
+"group": "Mouse",
+"label": "Middle button"
+},
+{
+"kind": 2,
+"hex": "0x104",
+"value": 260,
+"group": "Mouse",
+"label": "Forward"
+},
+{
+"kind": 2,
+"hex": "0x105",
+"value": 261,
+"group": "Mouse",
+"label": "Backward"
+},
+{
+"kind": 2,
+"hex": "0x130",
+"value": 304,
+"group": "Mouse",
+"label": "Scroll up"
+},
+{
+"kind": 2,
+"hex": "0x131",
+"value": 305,
+"group": "Mouse",
+"label": "Scroll down"
+},
+{
+"kind": 5,
+"hex": "",
+"value": 0,
+"group": "Mouse",
+"label": "Scroll left"
+},
+{
+"kind": 5,
+"hex": "",
+"value": 0,
+"group": "Mouse",
+"label": "Scroll right"
+},
+{
+"kind": 1,
+"hex": "0xa0",
+"value": 160,
+"group": "Profile",
+"label": "Profile 1"
+},
+{
+"kind": 1,
+"hex": "0xa1",
+"value": 161,
+"group": "Profile",
+"label": "Profile 2"
+},
+{
+"kind": 1,
+"hex": "0xa2",
+"value": 162,
+"group": "Profile",
+"label": "Profile 3"
+},
+{
+"kind": 1,
+"hex": "0xa3",
+"value": 163,
+"group": "Profile",
+"label": "Profile 4"
+},
+{
+"kind": 1,
+"hex": "0xa4",
+"value": 164,
+"group": "Profile",
+"label": "Profile 5"
+},
+{
+"kind": 1,
+"hex": "0xd2",
+"value": 210,
+"group": "Profile",
+"label": "Profile Cycle"
+},
+{
+"kind": 1,
+"hex": "0xd3",
+"value": 211,
+"group": "Profile",
+"label": "Previous Profile"
+},
+{
+"kind": 1,
+"hex": "0xd4",
+"value": 212,
+"group": "Profile",
+"label": "Next Profile"
+},
+{
+"kind": 1,
+"value": 230,
+"group": "Keyboard Shortcuts",
+"label": "F13"
+},
+{
+"kind": 1,
+"value": 231,
+"group": "Keyboard Shortcuts",
+"label": "F14"
+},
+{
+"kind": 1,
+"value": 232,
+"group": "Keyboard Shortcuts",
+"label": "F15"
+},
+{
+"kind": 1,
+"value": 233,
+"group": "Keyboard Shortcuts",
+"label": "F16"
+},
+{
+"kind": 1,
+"value": 234,
+"group": "Keyboard Shortcuts",
+"label": "F17"
+},
+{
+"kind": 1,
+"value": 235,
+"group": "Keyboard Shortcuts",
+"label": "F18"
+},
+{
+"kind": 1,
+"value": 236,
+"group": "Keyboard Shortcuts",
+"label": "F19"
+},
+{
+"kind": 1,
+"value": 237,
+"group": "Keyboard Shortcuts",
+"label": "F20"
+},
+{
+"kind": 1,
+"value": 238,
+"group": "Keyboard Shortcuts",
+"label": "F21"
+},
+{
+"kind": 1,
+"value": 239,
+"group": "Keyboard Shortcuts",
+"label": "F22"
+},
+{
+"kind": 1,
+"value": 240,
+"group": "Keyboard Shortcuts",
+"label": "F23"
+},
+{
+"kind": 1,
+"value": 241,
+"group": "Keyboard Shortcuts",
+"label": "F24"
+},
+{
+"kind": 1,
+"value": 230,
+"group": "Hotkey Switch",
+"label": "F13"
+},
+{
+"kind": 1,
+"value": 231,
+"group": "Hotkey Switch",
+"label": "F14"
+},
+{
+"kind": 1,
+"value": 232,
+"group": "Hotkey Switch",
+"label": "F15"
+},
+{
+"kind": 1,
+"value": 233,
+"group": "Hotkey Switch",
+"label": "F16"
+},
+{
+"kind": 1,
+"value": 234,
+"group": "Hotkey Switch",
+"label": "F17"
+},
+{
+"kind": 1,
+"value": 235,
+"group": "Hotkey Switch",
+"label": "F18"
+},
+{
+"kind": 1,
+"value": 236,
+"group": "Hotkey Switch",
+"label": "F19"
+},
+{
+"kind": 1,
+"value": 237,
+"group": "Hotkey Switch",
+"label": "F20"
+},
+{
+"kind": 1,
+"value": 238,
+"group": "Hotkey Switch",
+"label": "F21"
+},
+{
+"kind": 1,
+"value": 239,
+"group": "Hotkey Switch",
+"label": "F22"
+},
+{
+"kind": 1,
+"value": 240,
+"group": "Hotkey Switch",
+"label": "F23"
+},
+{
+"kind": 1,
+"value": 241,
+"group": "Hotkey Switch",
+"label": "F24"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Adobe",
+"label": "Illustrator"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Adobe",
+"label": "Premiere-pro"
+},
+{
+"kind": 1,
+"value": 0,
+"group": "Adobe",
+"label": "Photoshop"
+},
+{
+"kind": 1,
+"hex": "",
+"value": 0,
+"group": "DaVinci",
+"label": "File"
+},
+{
+"kind": 1,
+"hex": "",
+"value": 0,
+"group": "DaVinci",
+"label": "Marking"
+},
+{
+"kind": 1,
+"hex": "",
+"value": 0,
+"group": "DaVinci",
+"label": "Playback"
+},
+{
+"kind": 1,
+"hex": "",
+"value": 0,
+"group": "DaVinci",
+"label": "Editing"
+},
+{
+"kind": 1,
+"hex": "",
+"value": 0,
+"group": "DaVinci",
+"label": "Effects"
+},
+{
+"kind": 1,
+"hex": "",
+"value": 0,
+"group": "DaVinci",
+"label": "General"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Profile"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Scene"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Source"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Transition"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Volume"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Streaming"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Recording"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Studio Mode"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Reply Buffer"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Media"
+},
+{
+"kind": 0,
+"hex": "",
+"value": 0,
+"group": "OBS",
+"label": "Additional Features"
+}
+]
