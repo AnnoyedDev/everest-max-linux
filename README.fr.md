@@ -102,7 +102,7 @@ everest export-icons     exporte les icônes PNG
 
 ## Comment ça marche
 
-Base Camp passe par une DLL (`SDKDLL.dll`) qui envoie des paquets de 64 octets au clavier. J'ai tout désassemblé, noté chaque commande, et vérifié sur le vrai clavier.
+Base Camp passe par une DLL (`SDKDLL.dll`) qui envoie des paquets de 64 octets au clavier. J'ai tout désassemblé, noté chaque commande, et vérifié sur le vrai clavier. Tout est expliqué dans [PROTOCOL.md](PROTOCOL.md).
 
 ## Désinstaller
 

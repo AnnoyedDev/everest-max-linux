@@ -102,7 +102,7 @@ everest export-icons     export the PNG icons
 
 ## How it works
 
-Base Camp goes through a DLL (`SDKDLL.dll`) that sends the keyboard 64-byte packets. I disassembled it, wrote down every command and tested each one on the real keyboard.
+Base Camp goes through a DLL (`SDKDLL.dll`) that sends the keyboard 64-byte packets. I disassembled it, wrote down every command and tested each one on the real keyboard. Everything is explained in [PROTOCOL.md](PROTOCOL.md) (French only for now).
 
 ## Uninstall
 
