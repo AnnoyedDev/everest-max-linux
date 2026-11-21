@@ -172,6 +172,7 @@ pub struct Config {
     pub fn_key: Option<(usize, u8)>,
     pub dark_when_locked: bool,
     pub sync_devices: bool,
+    pub heatmap: bool,
 }
 
 impl Default for Config {
@@ -202,6 +203,7 @@ impl Default for Config {
             fn_key: None,
             dark_when_locked: false,
             sync_devices: false,
+            heatmap: false,
         }
     }
 }

@@ -10,6 +10,7 @@ mod fx;
 mod gui;
 mod icons;
 mod images;
+mod input;
 mod keys;
 mod obs;
 mod pad;

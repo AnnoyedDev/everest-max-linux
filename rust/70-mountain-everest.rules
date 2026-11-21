@@ -1,3 +1,4 @@
 KERNEL=="hidraw*", ATTRS{idVendor}=="3282", ATTRS{idProduct}=="000[189]", TAG+="uaccess"
 SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", ATTR{idVendor}=="3282", ATTR{idProduct}=="0009", TAG+="uaccess"
+KERNEL=="event*", SUBSYSTEM=="input", ATTRS{idVendor}=="3282", ATTRS{idProduct}=="0001", TAG+="uaccess"
 KERNEL=="uinput", SUBSYSTEM=="misc", TAG+="uaccess", OPTIONS+="static_node=uinput"

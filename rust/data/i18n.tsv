@@ -433,3 +433,9 @@ Maintenue, elle fait faire leur action « avec Fn » aux touches apprises.	While
 AVEC FN	WITH FN	Fn あり
 Éteindre l'éclairage quand la session est verrouillée	Turn the lights off while the session is locked	セッションのロック中はライティングを消す
 Appliquer aussi au MacroPad et à la couleur des menus du dock	Also apply to the MacroPad and the dock menu color	MacroPad とドックのメニューの色にも適用する
+Compter les frappes	Count keystrokes	打鍵数を数える
+Afficher la carte de chaleur	Show the heatmap	ヒートマップを表示
+{} frappes	{} keystrokes	{} 回
+Remettre à zéro	Reset	リセット
+Le service compte seulement combien de fois chaque touche est pressée, rien d'autre, et ça reste sur ton ordinateur.	The service only counts how many times each key is pressed, nothing else, and it stays on your computer.	サービスが数えるのは、それぞれのキーが押された回数だけです。データはパソコンの外には出ません。
+frappes du clavier illisibles (règle udev à mettre à jour)	can't read the keyboard's keystrokes (the udev rule needs updating)	キー入力を読み取れません（udev ルールの更新が必要です）

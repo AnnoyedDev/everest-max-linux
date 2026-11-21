@@ -117,6 +117,8 @@ pub struct App {
     update_confirm: bool,
     update_pending: bool,
     show_translate: bool,
+    show_heat: bool,
+    heat: (Instant, BTreeMap<String, u64>),
 }
 
 fn c32(c: [u8; 3]) -> Color32 {
@@ -387,6 +389,8 @@ impl App {
             update_confirm: false,
             update_pending: false,
             show_translate: false,
+            show_heat: false,
+            heat: (Instant::now() - Duration::from_secs(60), BTreeMap::new()),
         };
         app.read_ext();
         app
@@ -1005,7 +1009,19 @@ impl App {
             let layout = self.layout();
             let bindings = self.cfg.bindings.clone();
             let dk: Vec<bool> = self.cfg.display_keys.iter().map(|d| d.action != Action::Aucune).collect();
-            let fill = |n: &str, _: f32, _: f32| binding_color(bindings.get(n));
+            if self.show_heat && self.heat.0.elapsed() > Duration::from_secs(2) {
+                self.heat = (Instant::now(), crate::input::load_heatmap());
+                ctx.request_repaint_after(Duration::from_secs(2));
+            }
+            let (heat, max) = (&self.heat.1, self.heat.1.values().copied().max().unwrap_or(1).max(1) as f32);
+            let show_heat = self.show_heat;
+            let fill = |n: &str, _: f32, _: f32| {
+                if !show_heat {
+                    return binding_color(bindings.get(n));
+                }
+                let v = (*heat.get(n).unwrap_or(&0) as f32 / max).sqrt();
+                c32(if v < 0.5 { mix([16, 32, 64], [95, 180, 255], v * 2.0) } else { mix([95, 180, 255], [255, 80, 60], v * 2.0 - 1.0) })
+            };
             let badge = |n: &str| DISPLAY_KEY_NAMES.iter().position(|d| *d == n).is_some_and(|i| dk[i]);
             if let Some(k) = keyboard(ui, &layout, &fill, &badge, self.selected, false) {
                 self.selected = Some(k);
@@ -1023,6 +1039,21 @@ impl App {
                     theme::chip(ui, c, l);
                 }
             });
+            ui.add_space(4.0);
+            ui.horizontal_wrapped(|ui| {
+                theme::toggle(ui, &mut self.cfg.heatmap, t("Compter les frappes"));
+                theme::toggle(ui, &mut self.show_heat, t("Afficher la carte de chaleur"));
+                if self.show_heat {
+                    ui.label(RichText::new(tf!("{} frappes", self.heat.1.values().sum::<u64>())).color(DIM));
+                    if ui.small_button(t("Remettre à zéro")).clicked() {
+                        let _ = std::fs::write(crate::input::heatmap_path(), "{}");
+                        self.heat.1.clear();
+                    }
+                }
+            });
+            if self.cfg.heatmap {
+                ui.label(RichText::new(t("Le service compte seulement combien de fois chaque touche est pressée, rien d'autre, et ça reste sur ton ordinateur.")).small().color(DIM));
+            }
         });
         if quick != self.layout() {
             self.cfg.layout = quick;

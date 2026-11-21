@@ -53,6 +53,7 @@ pub fn run() {
         }
     });
 
+    std::thread::spawn(crate::input::heatmap);
     for k in [crate::pad::Kind::MacroPad, crate::pad::Kind::DisplayPad] {
         let tx = tx.clone();
         std::thread::spawn(move || crate::pad::listen(k, tx));
