@@ -213,7 +213,7 @@ pub fn macropad_lighting(d: &mut Device, e: &Effect, colors: &[[u8; 3]; PAD_KEYS
         for r in p::pad_custom(e.brightness, colors) {
             d.command_loose(&r)?;
         }
-    } else if let Some(r) = p::effect(e) {
+    } else if let Some(r) = p::pad_effect(e) {
         d.command_loose(&r)?;
     }
     if save {

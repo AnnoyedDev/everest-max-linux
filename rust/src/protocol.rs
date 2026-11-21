@@ -31,11 +31,13 @@ pub struct Effect {
     pub color2: Option<[u8; 3]>,
     pub background: [u8; 3],
     pub rainbow: bool,
+    #[serde(default)]
+    pub variant: u8,
 }
 
 impl Default for Effect {
     fn default() -> Self {
-        Effect { effect: 1, brightness: 100, speed: 50, direction: 0, color: [0, 0x44, 0xff], color2: None, background: [0; 3], rainbow: false }
+        Effect { effect: 1, brightness: 100, speed: 50, direction: 0, color: [0, 0x44, 0xff], color2: None, background: [0; 3], rainbow: false, variant: 0 }
     }
 }
 
@@ -65,8 +67,7 @@ pub fn speed_code(index: u8, speed: u8) -> u8 {
     }
 }
 
-fn eff_data(e: &Effect) -> [u8; 62] {
-    let index = EFFECTS[e.effect].1;
+fn eff_data(e: &Effect, index: u8) -> [u8; 62] {
     let mut d = [0u8; 62];
     d[0] = index;
     d[3] = e.brightness;
@@ -92,7 +93,7 @@ fn eff_data(e: &Effect) -> [u8; 62] {
             }
         }
     }
-    if matches!(index, 3 | 6 | 9) {
+    if matches!(index, 3 | 6 | 9 | 11) {
         d[16..19].copy_from_slice(&e.background);
     }
     d
@@ -136,8 +137,34 @@ pub fn effect(e: &Effect) -> Option<Report> {
     match EFFECTS[e.effect].1 {
         4 | 7 => Some(pkt(&[0x14, 0x2C], &block_data(e))),
         10 => None,
-        _ => Some(pkt(&[0x14, 0x2C], &eff_data(e))),
+        _ => Some(pkt(&[0x14, 0x2C], &eff_data(e, EFFECTS[e.effect].1))),
     }
+}
+
+pub fn pad_effect(e: &Effect) -> Option<Report> {
+    if e.effect >= FIRMWARE_EFFECTS || EFFECTS[e.effect].1 != 3 || e.variant == 0 {
+        return effect(e);
+    }
+    if e.variant == 2 {
+        return Some(pkt(&[0x14, 0x2C], &eff_data(e, 11)));
+    }
+    let mut d = [0u8; 62];
+    d[0] = 5;
+    d[2] = speed_code(5, e.speed);
+    d[3] = e.brightness;
+    d[4] = if e.rainbow { 2 } else if e.color2.is_some() { 16 } else { 0 };
+    d[5] = 0xFF;
+    d[6] = 2;
+    if !e.rainbow {
+        d[7] = 1;
+        d[8] = 0xFF;
+        d[9..12].copy_from_slice(&e.color);
+        d[12] = 0xFF;
+        if let Some(c2) = e.color2 {
+            d[13..16].copy_from_slice(&c2);
+        }
+    }
+    Some(pkt(&[0x14, 0x2C], &d))
 }
 
 pub fn custom_static(colors: &[[u8; 3]; CUSTOM_KEYS]) -> Vec<Report> {
@@ -330,6 +357,11 @@ mod tests {
         assert_eq!(&pad_init()[..6], &[0x11, 0x80, 0, 0, 1, 0]);
         assert_eq!(&pad_brightness(75)[..5], &[0x12, 0x03, 0, 0, 75]);
         assert_eq!(&pad_image(4)[..11], &[0x21, 0, 0, 0, 4, 0x3D, 0, 0, 0x65, 0x65, 0]);
+        let base = Effect { effect: 4, speed: 50, color: [9, 8, 7], ..Default::default() };
+        assert_eq!(pad_effect(&base), effect(&base));
+        let b = pad_effect(&Effect { variant: 1, color2: Some([1, 1, 1]), ..base.clone() }).unwrap();
+        assert_eq!(&b[2..18], &[5, 0, 3, 100, 16, 0xFF, 2, 1, 0xFF, 9, 8, 7, 0xFF, 1, 1, 1]);
+        assert_eq!(&pad_effect(&Effect { variant: 2, ..base }).unwrap()[2..5], &[11, 0, 3]);
         let mut c = [[0u8; 3]; PAD_KEYS];
         c[11] = [1, 2, 3];
         let [on, colors] = pad_custom(80, &c);

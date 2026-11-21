@@ -1493,6 +1493,15 @@ impl App {
                             }
                         }
                     });
+                    if p::EFFECTS[self.cfg.macropad.effect.effect.min(p::FIRMWARE_EFFECTS - 1)].1 == 3 {
+                        ui.add_space(6.0);
+                        ui.horizontal(|ui| {
+                            ui.label(RichText::new(t("Variante")).color(DIM));
+                            for (v, n) in ["A", "B", "C"].iter().enumerate() {
+                                ui.selectable_value(&mut self.cfg.macropad.effect.variant, v as u8, *n);
+                            }
+                        });
+                    }
                     ui.add_space(8.0);
                     Self::effect_settings(ui, &mut self.icons, ctx, &mut self.cfg.macropad.effect);
                     ui.add_space(8.0);
