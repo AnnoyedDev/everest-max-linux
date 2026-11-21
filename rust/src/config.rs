@@ -124,6 +124,16 @@ impl DisplayPadCfg {
     }
 }
 
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, Default)]
+#[serde(default)]
+pub struct Profile {
+    pub name: String,
+    pub effect: Effect,
+    pub custom: BTreeMap<u8, [u8; 3]>,
+    pub bindings: BTreeMap<String, Binding>,
+    pub display_keys: [DisplayKey; 4],
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct HostKey {
     pub name: String,
@@ -156,6 +166,7 @@ pub struct Config {
     pub layout: String,
     pub obs_port: u16,
     pub obs_password: String,
+    pub profiles: BTreeMap<u8, Profile>,
 }
 
 impl Default for Config {
@@ -182,6 +193,7 @@ impl Default for Config {
             layout: String::new(),
             obs_port: 4455,
             obs_password: String::new(),
+            profiles: BTreeMap::new(),
         }
     }
 }
@@ -234,6 +246,38 @@ impl Config {
         a
     }
 
+    pub fn profile_name(&self, n: u8) -> &str {
+        self.profiles.get(&n).map_or("", |p| p.name.as_str())
+    }
+
+    pub fn snapshot(&self) -> Profile {
+        Profile { name: self.profile_name(self.profile).to_string(), effect: self.effect.clone(), custom: self.custom.clone(), bindings: self.bindings.clone(), display_keys: self.display_keys.clone() }
+    }
+
+    pub fn restore(&mut self, p: Profile) {
+        self.effect = p.effect;
+        self.custom = p.custom;
+        self.bindings = p.bindings;
+        self.display_keys = p.display_keys;
+    }
+
+    pub fn switch_profile(&mut self, n: u8) {
+        if n == self.profile {
+            return;
+        }
+        self.profiles.insert(self.profile, self.snapshot());
+        self.profile = n;
+        if let Some(p) = self.profiles.get(&n).cloned() {
+            self.restore(p);
+        }
+    }
+
+    pub fn copy_profile_to(&mut self, n: u8) {
+        let mut p = self.snapshot();
+        p.name = self.profile_name(n).to_string();
+        self.profiles.insert(n, p);
+    }
+
     pub fn display_key_in_sync(&self, i: usize) -> bool {
         let want = display_key_binding(i, self.display_keys[i].action != Action::Aucune);
         let have = self.bindings.get(DISPLAY_KEY_NAMES[i]);
@@ -259,6 +303,22 @@ mod tests {
         assert_eq!(d.keys[1].action, super::Action::Page { page: 0 });
         assert_eq!(d.page(2)[0].action, super::Action::Page { page: 0 });
         assert!(std::ptr::eq(d.page(9), &d.keys));
+    }
+
+    #[test]
+    fn each_profile_keeps_its_own_settings() {
+        let mut c = super::Config::default();
+        c.profiles.entry(1).or_default().name = "Jeu".into();
+        c.effect.effect = 3;
+        c.switch_profile(2);
+        assert_eq!(c.effect.effect, 3);
+        c.effect.effect = 5;
+        c.switch_profile(1);
+        assert_eq!((c.effect.effect, c.profile_name(1)), (3, "Jeu"));
+        c.switch_profile(2);
+        assert_eq!(c.effect.effect, 5);
+        c.copy_profile_to(4);
+        assert_eq!(c.profiles[&4].effect.effect, 5);
     }
 
     #[test]

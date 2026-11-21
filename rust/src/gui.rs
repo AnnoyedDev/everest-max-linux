@@ -186,6 +186,13 @@ fn pick_file(title: &str, images_only: bool) -> Option<String> {
     (!s.is_empty()).then_some(s)
 }
 
+fn save_file(title: &str, name: &str) -> Option<String> {
+    let out = std::process::Command::new("zenity").args(["--file-selection", "--save", "--confirm-overwrite", "--title", title, "--filename", name]).output()
+        .or_else(|_| std::process::Command::new("kdialog").args(["--getsavefilename", name]).output()).ok()?;
+    let s = String::from_utf8_lossy(&out.stdout).trim().to_string();
+    (!s.is_empty()).then_some(s)
+}
+
 fn binding_color(b: Option<&Binding>) -> Color32 {
     match b {
         None | Some(Binding::ParDefaut) => Color32::from_rgb(0x12, 0x30, 0x52),
@@ -480,9 +487,11 @@ impl App {
                         let b = egui::Button::new(RichText::new(n.to_string()).font(theme::title_font(14.0)).color(col))
                             .min_size(Vec2::new(34.0, 30.0)).fill(if sel { ACCENT } else { Color32::TRANSPARENT })
                             .stroke(if on { Stroke::new(1.0_f32, LINE) } else { Stroke::new(1.0_f32, Color32::from_rgba_premultiplied(20, 20, 20, 60)) });
-                        let r = ui.add(b).on_hover_text(if on { t("Actif sur le clavier — clic droit pour désactiver") } else { t("Désactivé sur le clavier — clic droit pour activer") });
+                        let state = if on { t("Actif sur le clavier — clic droit pour désactiver") } else { t("Désactivé sur le clavier — clic droit pour activer") };
+                        let name = self.cfg.profile_name(n);
+                        let r = ui.add(b).on_hover_text(if name.is_empty() { state.to_string() } else { format!("{name}\n{state}") });
                         if r.clicked() {
-                            self.cfg.profile = n;
+                            self.cfg.switch_profile(n);
                         }
                         r.context_menu(|ui| {
                             if ui.button(if on { t("Désactiver sur le clavier") } else { t("Activer sur le clavier") }).clicked() {
@@ -1854,6 +1863,43 @@ impl App {
                         ui.label(RichText::new(t("Lecture du clavier…")).color(DIM));
                     }
                 }
+                ui.add_space(8.0);
+                let cur = self.cfg.profile;
+                ui.horizontal(|ui| {
+                    ui.label(RichText::new(tf!("Nom du profil {}", cur)).color(DIM));
+                    let snap = self.cfg.snapshot();
+                    let entry = self.cfg.profiles.entry(cur).or_insert(snap);
+                    ui.add(egui::TextEdit::singleline(&mut entry.name).hint_text(tf!("Profil {}", cur)).desired_width(160.0));
+                });
+                ui.horizontal(|ui| {
+                    ui.label(RichText::new(t("Copier vers")).color(DIM));
+                    for n in (1..=5u8).filter(|&n| n != cur) {
+                        if ui.button(n.to_string()).on_hover_text(t("Remplace l'éclairage, les touches et les touches écran de ce profil")).clicked() {
+                            self.cfg.copy_profile_to(n);
+                            self.say(tf!("Profil {} copié vers le profil {}", cur, n), true);
+                        }
+                    }
+                });
+                ui.horizontal(|ui| {
+                    if theme::icon_button(ui, &mut self.icons, "upload", t("Exporter"), false).clicked() {
+                        if let Some(f) = save_file(t("Exporter le profil"), &format!("everest-profil-{cur}.json")) {
+                            let r = std::fs::write(&f, serde_json::to_string_pretty(&self.cfg.snapshot()).unwrap());
+                            self.say(match r { Ok(()) => tf!("Profil exporté dans {}", f), Err(e) => e.to_string() }, true);
+                        }
+                    }
+                    if theme::icon_button(ui, &mut self.icons, "folder", t("Importer"), false).clicked() {
+                        if let Some(f) = pick_file(t("Importer un profil"), false) {
+                            match std::fs::read_to_string(&f).map_err(|e| e.to_string()).and_then(|s| serde_json::from_str::<crate::config::Profile>(&s).map_err(|e| e.to_string())) {
+                                Ok(p) => {
+                                    self.cfg.profiles.entry(cur).or_default().name = p.name.clone();
+                                    self.cfg.restore(p);
+                                    self.say(t("Profil importé — pense à l'envoyer au clavier"), true);
+                                }
+                                Err(e) => self.say(tf!("Fichier de profil invalide : {}", e), false),
+                            }
+                        }
+                    }
+                });
             });
             cols[1].add_space(8.0);
             let img = self.ic(ctx, "record");

@@ -414,3 +414,15 @@ OBS connecté — scènes : {}	OBS connected — scenes: {}	OBS に接続しま�
 OBS injoignable sur le port {} ({})	Can't reach OBS on port {} ({})	ポート {} で OBS につながりません（{}）
 mot de passe OBS refusé	OBS rejected the password	OBS にパスワードを拒否されました
 OBS a fermé la connexion ({})	OBS closed the connection ({})	OBS が接続を閉じました（{}）
+Nom du profil {}	Profile {} name	プロファイル {} の名前
+Profil {}	Profile {}	プロファイル {}
+Copier vers	Copy to	コピー先
+Remplace l'éclairage, les touches et les touches écran de ce profil	Replaces this profile's lighting, keys and display keys	このプロファイルのライティング・キー・ディスプレイキーを上書きします
+Profil {} copié vers le profil {}	Profile {} copied to profile {}	プロファイル {} をプロファイル {} にコピーしました
+Exporter	Export	書き出す
+Importer	Import	読み込む
+Exporter le profil	Export the profile	プロファイルを書き出す
+Profil exporté dans {}	Profile exported to {}	プロファイルを {} に書き出しました
+Importer un profil	Import a profile	プロファイルを読み込む
+Profil importé — pense à l'envoyer au clavier	Profile imported — remember to send it to the keyboard	プロファイルを読み込みました。キーボードへの送信もお忘れなく
+Fichier de profil invalide : {}	Invalid profile file: {}	プロファイルのファイルが正しくありません：{}
