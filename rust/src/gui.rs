@@ -69,6 +69,39 @@ impl DockEdit {
     }
 }
 
+#[derive(Default)]
+struct Rec {
+    events: Vec<MacroEvent>,
+    done: Option<Result<(), String>>,
+}
+
+struct Recorder {
+    key: &'static str,
+    stop: Arc<std::sync::atomic::AtomicBool>,
+    rec: Arc<Mutex<Rec>>,
+}
+
+fn record_macro(stop: Arc<std::sync::atomic::AtomicBool>, out: Arc<Mutex<Rec>>, ctx: egui::Context) {
+    let (started, mut last) = (Instant::now(), Instant::now());
+    let r = crate::input::read_keys(|ev| {
+        let mut s = out.lock().unwrap();
+        if let Some(k) = ev.and_then(|(code, down)| crate::input::name_of(code).and_then(keys::by_name).filter(|k| k.dll != 0).map(|k| (k.dll, down))) {
+            let (key, down) = k;
+            if down || s.events.iter().any(|e| e.key == key && e.action == 2) {
+                if let Some(prev) = s.events.last_mut() {
+                    prev.delay = last.elapsed().as_millis().min(65535) as u16;
+                }
+                s.events.push(MacroEvent { key, page: 0, action: if down { 2 } else { 1 }, delay: 30 });
+                last = Instant::now();
+                ctx.request_repaint();
+            }
+        }
+        !stop.load(std::sync::atomic::Ordering::Relaxed) && started.elapsed() < Duration::from_secs(120) && s.events.len() < 400
+    });
+    out.lock().unwrap().done = Some(r);
+    ctx.request_repaint();
+}
+
 type Task = Box<dyn FnOnce(&mut Device, &dyn Fn(f32)) -> Result<(), String> + Send>;
 
 #[derive(Default)]
@@ -119,6 +152,7 @@ pub struct App {
     show_translate: bool,
     show_heat: bool,
     heat: (Instant, BTreeMap<String, u64>),
+    recorder: Option<Recorder>,
 }
 
 fn c32(c: [u8; 3]) -> Color32 {
@@ -391,6 +425,7 @@ impl App {
             show_translate: false,
             show_heat: false,
             heat: (Instant::now() - Duration::from_secs(60), BTreeMap::new()),
+            recorder: None,
         };
         app.read_ext();
         app
@@ -882,6 +917,8 @@ impl App {
             });
         };
         let icons = &mut self.icons;
+        let recorder = &mut self.recorder;
+        let mut message = None;
         let b = self.cfg.bindings.get_mut(name).unwrap();
         match b {
             Binding::Touche { target } => {
@@ -988,6 +1025,39 @@ impl App {
                     events.swap(i, i - 1);
                 }
                 ui.horizontal(|ui| {
+                    let finished = recorder.as_ref().filter(|r| r.key == name).and_then(|r| {
+                        let mut g = r.rec.lock().unwrap();
+                        g.done.take().map(|d| (d, std::mem::take(&mut g.events)))
+                    });
+                    match (finished, recorder.as_ref().filter(|r| r.key == name)) {
+                        (Some((Ok(()), ev)), _) => {
+                            if !ev.is_empty() {
+                                *events = ev;
+                            }
+                            *recorder = None;
+                        }
+                        (Some((Err(e), _)), _) => {
+                            message = Some(e);
+                            *recorder = None;
+                        }
+                        (None, Some(r)) => {
+                            ui.add(egui::Spinner::new().color(BAD));
+                            ui.label(RichText::new(tf!("Enregistrement… {} événements", r.rec.lock().unwrap().events.len())).color(BAD));
+                            if theme::icon_button(ui, icons, "stop", t("Arrêter"), true).clicked() {
+                                r.stop.store(true, std::sync::atomic::Ordering::Relaxed);
+                            }
+                        }
+                        (None, None) => {
+                            if recorder.is_none() && theme::icon_button(ui, icons, "record", t("Enregistrer en direct"), false).clicked() {
+                                let r = Recorder { key: name, stop: Default::default(), rec: Default::default() };
+                                let (stop, rec, c) = (r.stop.clone(), r.rec.clone(), ctx.clone());
+                                std::thread::spawn(move || record_macro(stop, rec, c));
+                                *recorder = Some(r);
+                            }
+                        }
+                    }
+                });
+                ui.horizontal(|ui| {
                     if theme::icon_button(ui, icons, "plus", t("Touche (appui + relâche)"), false).clicked() {
                         events.push(MacroEvent { key: 31, page: 0, action: 2, delay: 30 });
                         events.push(MacroEvent { key: 31, page: 0, action: 1, delay: 30 });
@@ -996,8 +1066,12 @@ impl App {
                         events.push(MacroEvent { key: 31, page: 0, action: 2, delay: 50 });
                     }
                 });
+                ui.label(RichText::new(t("L'enregistrement capte les touches du clavier avec leurs délais, pas la souris.")).small().color(DIM));
             }
             _ => {}
+        }
+        if let Some(e) = message {
+            self.say(e, false);
         }
     }
 
