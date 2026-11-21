@@ -1885,9 +1885,9 @@ impl App {
                     });
                 } else {
                     egui::Frame::default().fill(Color32::from_rgba_premultiplied(60, 12, 12, 140)).stroke(Stroke::new(1.0_f32, BAD)).corner_radius(4).inner_margin(10).show(ui, |ui| {
-                        ui.horizontal(|ui| {
+                        ui.horizontal_top(|ui| {
                             ui.add(self.icons.image(ctx, "warn", 22.0, BAD));
-                            ui.label(RichText::new(t("Sans mise à jour, certaines fonctions de cette application peuvent ne pas marcher (effets animés, dock, touches écran), et l'ancien service peut écrire des réglages incompatibles et corrompre ta configuration.")).color(BAD));
+                            ui.add(egui::Label::new(RichText::new(t("Sans mise à jour, certaines fonctions de cette application peuvent ne pas marcher (effets animés, dock, touches écran), et l'ancien service peut écrire des réglages incompatibles et corrompre ta configuration.")).color(BAD)).wrap());
                         });
                     });
                     ui.add_space(8.0);
