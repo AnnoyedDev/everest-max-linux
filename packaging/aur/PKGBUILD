@@ -1,0 +1,32 @@
+pkgname=everest-max-linux
+pkgver=1.2.0
+pkgrel=1
+pkgdesc="Base Camp for Linux: Mountain Everest Max, MacroPad and DisplayPad"
+arch=('x86_64')
+url="https://github.com/AnnoyedDev/everest-max-linux"
+license=('MIT')
+depends=('fontconfig' 'libpulse' 'polkit' 'systemd')
+makedepends=('cargo')
+optdepends=('zenity: file pickers' 'kdialog: file pickers on KDE' 'noto-fonts-cjk: Japanese text')
+source=("$pkgname-$pkgver.tar.gz::$url/archive/refs/tags/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+  cd "$pkgname-$pkgver/rust"
+  cargo build --release --locked
+}
+
+check() {
+  cd "$pkgname-$pkgver/rust"
+  cargo test --release --locked
+}
+
+package() {
+  cd "$pkgname-$pkgver"
+  install -Dm755 rust/target/release/everest "$pkgdir/usr/bin/everest"
+  install -Dm644 rust/70-mountain-everest.rules "$pkgdir/usr/lib/udev/rules.d/70-mountain-everest.rules"
+  install -Dm644 packaging/everest-uinput.conf "$pkgdir/usr/lib/modules-load.d/everest-uinput.conf"
+  install -Dm644 packaging/everest-basecamp.desktop "$pkgdir/usr/share/applications/everest-basecamp.desktop"
+  install -Dm644 rust/assets/everest-basecamp.svg "$pkgdir/usr/share/icons/hicolor/scalable/apps/everest-basecamp.svg"
+  install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+}

@@ -6,6 +6,8 @@ use crate::i18n::t;
 
 pub const RULES: &str = include_str!("../70-mountain-everest.rules");
 const RULES_PATH: &str = "/etc/udev/rules.d/70-mountain-everest.rules";
+const SYSTEM_RULES: &str = "/usr/lib/udev/rules.d/70-mountain-everest.rules";
+const SYSTEM_DESKTOP: &str = "/usr/share/applications/everest-basecamp.desktop";
 const SERVICE_NAME: &str = "everest-basecamp";
 
 #[derive(Clone, Copy, PartialEq, Eq, Debug)]
@@ -141,7 +143,8 @@ fn same_file(a: &PathBuf, b: &PathBuf) -> bool {
 }
 
 pub fn run(cfg: &Config) -> Vec<Check> {
-    let rules_ok = std::fs::read_to_string(RULES_PATH).map(|s| s.trim() == RULES.trim()).unwrap_or(false);
+    let rules_ok = [RULES_PATH, SYSTEM_RULES].iter().any(|p| std::fs::read_to_string(p).is_ok_and(|s| s.trim() == RULES.trim()));
+    let desktop_ok = desktop_file().exists() || std::path::Path::new(SYSTEM_DESKTOP).exists();
     let found = device::find_hidraw().is_ok();
     let opened = found && device::Device::open().is_ok();
     let uinput_ok = std::fs::OpenOptions::new().write(true).open("/dev/uinput").is_ok();
@@ -159,8 +162,8 @@ pub fn run(cfg: &Config) -> Vec<Check> {
             detail: if uinput_ok { t("Raccourcis et macros des touches écran disponibles").into() } else { t("/dev/uinput inaccessible (module ou permission)").into() } },
         Check { item: Item::Binary, ok: bin_ok, icon: "download", title: t("Programme installé"),
             detail: if bin_ok { "~/.local/bin/everest".into() } else { tf!("Copier vers {}", "~/.local/bin/everest") } },
-        Check { item: Item::Desktop, ok: desktop_file().exists(), icon: "desktop", title: t("Raccourci d'application"),
-            detail: if desktop_file().exists() { t("Présent dans le menu des applications").into() } else { t("Absent du menu des applications").into() } },
+        Check { item: Item::Desktop, ok: desktop_ok, icon: "desktop", title: t("Raccourci d'application"),
+            detail: if desktop_ok { t("Présent dans le menu des applications").into() } else { t("Absent du menu des applications").into() } },
         Check { item: Item::Service, ok: service_ok, icon: "settings", title: t("Service"),
             detail: if service_ok { t("Actif, démarre à la connexion").into() } else if service_active() { t("Actif mais lancé depuis une ancienne copie — à mettre à jour").into() } else { t("Arrêté ou non installé — les actions des touches écran ne marchent pas").into() } },
         Check { item: Item::DisplayKeys, ok: keys_ok, icon: "screens", title: t("Touches écran"),
@@ -173,7 +176,7 @@ pub fn fix_root() -> Result<(), String> {
     let tmp = dir.join("everest-basecamp.rules");
     std::fs::write(&tmp, RULES).map_err(|e| e.to_string())?;
     let script = format!(
-        "install -m 0644 '{}' {RULES_PATH} && printf 'uinput\\n' > /etc/modules-load.d/everest-uinput.conf && modprobe uinput && udevadm control --reload && udevadm trigger --action=change --subsystem-match=hidraw && udevadm trigger --action=change --subsystem-match=misc",
+        "install -m 0644 '{}' {RULES_PATH} && printf 'uinput\\n' > /etc/modules-load.d/everest-uinput.conf && modprobe uinput && udevadm control --reload && udevadm trigger --action=change --subsystem-match=hidraw --subsystem-match=input --subsystem-match=usb --subsystem-match=misc",
         tmp.display().to_string().replace('\'', "")
     );
     let ok = Command::new("pkexec").args(["/bin/sh", "-c", &script]).status().map(|s| s.success()).unwrap_or(false);

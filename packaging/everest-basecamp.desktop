@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Everest Base Camp
+Comment=Mountain Everest Max, MacroPad and DisplayPad: lighting, keys, macros, screens
+Exec=everest
+Icon=everest-basecamp
+Categories=Settings;HardwareSettings;Utility;
+Terminal=false

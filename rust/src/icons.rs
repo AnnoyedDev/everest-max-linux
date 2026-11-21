@@ -126,13 +126,7 @@ pub const LIBRARY: &[(&str, &str)] = &[
     ("arrow-up", "Haut"), ("arrow-down", "Bas"), ("arrow-left", "Gauche"), ("arrow-right", "Droite"),
 ];
 
-pub const APP_ICON: &str = r##"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-<defs><pattern id="g" width="16" height="16" patternUnits="userSpaceOnUse"><path d="M16 0H0V16" fill="none" stroke="#5FB4FF" stroke-opacity=".18" stroke-width="1"/></pattern></defs>
-<rect x="8" y="8" width="240" height="240" rx="44" fill="#0A2540"/><rect x="8" y="8" width="240" height="240" rx="44" fill="url(#g)"/>
-<rect x="8" y="8" width="240" height="240" rx="44" fill="none" stroke="#5FB4FF" stroke-width="6"/>
-<path d="M40 186l58-90 34 50 22-30 62 70z" fill="#5FB4FF" fill-opacity=".18" stroke="#9AD4FF" stroke-width="10" stroke-linejoin="round"/>
-<path d="M98 96l14 22 12-10" fill="none" stroke="#FFFFFF" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
-</svg>"##;
+pub const APP_ICON: &str = include_str!("../assets/everest-basecamp.svg");
 
 pub fn svg(name: &str) -> Option<String> {
     let body = ICONS.iter().find(|(n, _)| *n == name)?.1;

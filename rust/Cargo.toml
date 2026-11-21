@@ -21,3 +21,31 @@ libc = "0.2"
 
 [profile.release]
 opt-level = 3
+
+[package.metadata.deb]
+name = "everest-max-linux"
+maintainer = "AnnoyedDev <35310573+AnnoyedDev@users.noreply.github.com>"
+section = "utils"
+depends = "$auto, pulseaudio-utils | pipewire-pulse, fontconfig, pkexec | policykit-1"
+assets = [
+    ["target/release/everest", "usr/bin/", "755"],
+    ["70-mountain-everest.rules", "usr/lib/udev/rules.d/", "644"],
+    ["../packaging/everest-uinput.conf", "usr/lib/modules-load.d/", "644"],
+    ["../packaging/everest-basecamp.desktop", "usr/share/applications/", "644"],
+    ["assets/everest-basecamp.svg", "usr/share/icons/hicolor/scalable/apps/", "644"],
+]
+
+[package.metadata.generate-rpm]
+name = "everest-max-linux"
+assets = [
+    { source = "target/release/everest", dest = "/usr/bin/everest", mode = "755" },
+    { source = "70-mountain-everest.rules", dest = "/usr/lib/udev/rules.d/70-mountain-everest.rules", mode = "644" },
+    { source = "../packaging/everest-uinput.conf", dest = "/usr/lib/modules-load.d/everest-uinput.conf", mode = "644" },
+    { source = "../packaging/everest-basecamp.desktop", dest = "/usr/share/applications/everest-basecamp.desktop", mode = "644" },
+    { source = "assets/everest-basecamp.svg", dest = "/usr/share/icons/hicolor/scalable/apps/everest-basecamp.svg", mode = "644" },
+]
+
+[package.metadata.generate-rpm.requires]
+fontconfig = "*"
+pulseaudio-utils = "*"
+polkit = "*"
