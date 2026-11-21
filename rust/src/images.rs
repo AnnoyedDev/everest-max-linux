@@ -67,14 +67,34 @@ fn draw_icon(img: &mut RgbImage, name: &str, size: u32, x0: i32, y0: i32, color:
 }
 
 pub fn render(w: u32, h: u32, art: &Art) -> Result<RgbImage, String> {
-    let mut img = if art.image.is_empty() {
-        let mut img = RgbImage::from_pixel(w, h, Rgb(art.bg));
-        if art.grid {
-            grid(&mut img);
+    let base = if art.image.is_empty() { None } else { Some(image::open(art.image).map_err(|e| format!("{}: {e}", art.image))?) };
+    compose(w, h, art, base.as_ref())
+}
+
+pub fn gif_frames(path: &str) -> Option<Vec<(image::DynamicImage, std::time::Duration)>> {
+    use image::AnimationDecoder;
+    if !path.to_lowercase().ends_with(".gif") {
+        return None;
+    }
+    let file = std::io::BufReader::new(std::fs::File::open(path).ok()?);
+    let frames: Vec<_> = image::codecs::gif::GifDecoder::new(file).ok()?.into_frames().take(300).filter_map(|f| f.ok()).map(|f| {
+        let (n, d) = f.delay().numer_denom_ms();
+        let ms = (n / d.max(1)).max(100) as u64;
+        (image::DynamicImage::ImageRgba8(f.into_buffer()), std::time::Duration::from_millis(ms))
+    }).collect();
+    (frames.len() > 1).then_some(frames)
+}
+
+pub fn compose(w: u32, h: u32, art: &Art, base: Option<&image::DynamicImage>) -> Result<RgbImage, String> {
+    let mut img = match base {
+        None => {
+            let mut img = RgbImage::from_pixel(w, h, Rgb(art.bg));
+            if art.grid {
+                grid(&mut img);
+            }
+            img
         }
-        img
-    } else {
-        image::open(art.image).map_err(|e| format!("{}: {e}", art.image))?.resize_to_fill(w, h, FilterType::Lanczos3).to_rgb8()
+        Some(b) => b.resize_to_fill(w, h, FilterType::Lanczos3).to_rgb8(),
     };
     let text = art.text.trim();
     let has_icon = !art.icon.is_empty();
