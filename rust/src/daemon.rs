@@ -73,9 +73,10 @@ pub fn run() {
                             let _ = tx.send(cfg.display_keys[i].action.clone());
                         }
                     }
+                    let fn_held = cfg.fn_key.is_some_and(|(b, n)| b < 64 && bit(&r, b, n));
                     for hk in &cfg.host_keys {
                         if hk.byte < 64 && bit(&r, hk.byte, hk.bit) && !bit(&prev, hk.byte, hk.bit) {
-                            let _ = tx.send(hk.action.clone());
+                            let _ = tx.send(if fn_held && hk.fn_action != Action::Aucune { hk.fn_action.clone() } else { hk.action.clone() });
                         }
                     }
                     let newly: u32 = (1..64).map(|i| (r[i] & !prev[i]).count_ones()).sum();

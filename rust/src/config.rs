@@ -140,6 +140,8 @@ pub struct HostKey {
     pub byte: usize,
     pub bit: u8,
     pub action: Action,
+    #[serde(default)]
+    pub fn_action: Action,
 }
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
@@ -167,6 +169,7 @@ pub struct Config {
     pub obs_port: u16,
     pub obs_password: String,
     pub profiles: BTreeMap<u8, Profile>,
+    pub fn_key: Option<(usize, u8)>,
 }
 
 impl Default for Config {
@@ -194,6 +197,7 @@ impl Default for Config {
             obs_port: 4455,
             obs_password: String::new(),
             profiles: BTreeMap::new(),
+            fn_key: None,
         }
     }
 }

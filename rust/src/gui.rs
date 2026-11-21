@@ -107,6 +107,7 @@ pub struct App {
     gallery: Option<usize>,
     gallery_search: String,
     learning: Option<Arc<Mutex<Option<Result<(usize, u8), String>>>>>,
+    learning_fn: bool,
     start: Instant,
     ext: Arc<Mutex<Option<[u8; 29]>>>,
     dock_edit: Option<DockEdit>,
@@ -376,6 +377,7 @@ impl App {
             gallery: None,
             gallery_search: String::new(),
             learning: None,
+            learning_fn: false,
             start: Instant::now(),
             ext: Arc::new(Mutex::new(None)),
             dock_edit: None,
@@ -1940,7 +1942,11 @@ impl App {
                 let learned = self.learning.as_ref().map(|l| l.lock().unwrap().take());
                 match learned {
                     Some(Some(Ok((byte, bit)))) => {
-                        self.cfg.host_keys.push(HostKey { name: tf!("Touche {}.{}", byte, bit), byte, bit, action: Action::Aucune });
+                        if self.learning_fn {
+                            self.cfg.fn_key = Some((byte, bit));
+                        } else {
+                            self.cfg.host_keys.push(HostKey { name: tf!("Touche {}.{}", byte, bit), byte, bit, action: Action::Aucune, fn_action: Action::Aucune });
+                        }
                         self.learning = None;
                     }
                     Some(Some(Err(e))) => {
@@ -1954,7 +1960,16 @@ impl App {
                         });
                     }
                     None => {
-                        if theme::icon_button(ui, &mut self.icons, "target", t("Apprendre une touche"), false).clicked() {
+                        let mut start = None;
+                        ui.horizontal(|ui| {
+                            if theme::icon_button(ui, &mut self.icons, "target", t("Apprendre une touche"), false).clicked() {
+                                start = Some(false);
+                            }
+                            if theme::icon_button(ui, &mut self.icons, "layers", t("Choisir la touche Fn"), false).clicked() {
+                                start = Some(true);
+                            }
+                        });
+                        if let Some(is_fn) = start {
                             let slot = Arc::new(Mutex::new(None));
                             let (s2, c2) = (slot.clone(), ctx.clone());
                             std::thread::spawn(move || {
@@ -1962,9 +1977,25 @@ impl App {
                                 c2.request_repaint();
                             });
                             self.learning = Some(slot);
+                            self.learning_fn = is_fn;
                         }
                     }
                 }
+                ui.horizontal(|ui| {
+                    ui.label(RichText::new(t("Touche Fn logicielle")).color(DIM));
+                    match self.cfg.fn_key {
+                        Some((b, n)) => {
+                            ui.label(tf!("Touche {}.{}", b, n));
+                            if ui.small_button("✖").clicked() {
+                                self.cfg.fn_key = None;
+                            }
+                        }
+                        None => {
+                            ui.label(RichText::new(t("aucune")).color(DIM));
+                        }
+                    }
+                });
+                ui.label(RichText::new(t("Maintenue, elle fait faire leur action « avec Fn » aux touches apprises.")).small().color(DIM));
                 let mut remove = None;
                 for (i, hk) in self.cfg.host_keys.iter_mut().enumerate() {
                     ui.push_id(("hk", i), |ui| {
@@ -1976,6 +2007,12 @@ impl App {
                                 }
                             });
                             Self::action_editor(ui, &mut self.icons, ctx, &mut hk.action, &self.sinks, &[], 0);
+                            if self.cfg.fn_key.is_some() {
+                                ui.push_id("fn", |ui| {
+                                    ui.label(RichText::new(t("AVEC FN")).font(theme::title_font(11.0)).color(DIM));
+                                    Self::action_editor(ui, &mut self.icons, ctx, &mut hk.fn_action, &self.sinks, &[], 0);
+                                });
+                            }
                         });
                     });
                 }
