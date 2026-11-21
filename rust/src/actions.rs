@@ -69,6 +69,7 @@ impl Runner {
                 PowerOp::Deconnexion => spawn("loginctl", &["terminate-session", &std::env::var("XDG_SESSION_ID").unwrap_or_default()]),
             },
             Action::Multi { actions } => actions.iter().try_for_each(|x| self.run(x)),
+            Action::Page { .. } => Ok(()),
         }
     }
 }

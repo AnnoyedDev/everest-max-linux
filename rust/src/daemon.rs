@@ -1,21 +1,17 @@
 use crate::actions::Runner;
 use crate::audio::Audio;
-use crate::config::{Action, Config, DISPLAY_KEY_BITS};
+use crate::config::{mtime, Action, Config, DISPLAY_KEY_BITS};
 use crate::device::Device;
 use crate::stats::Stats;
 use crate::{apply, fx, protocol as p};
 use std::collections::VecDeque;
 use std::sync::mpsc;
-use std::time::{Duration, Instant, SystemTime};
+use std::time::{Duration, Instant};
 
 const FRAME: Duration = Duration::from_millis(33);
 
 fn bit(r: &[u8; 64], byte: usize, bit: u8) -> bool {
     r[byte] >> bit & 1 == 1
-}
-
-fn mtime() -> Option<SystemTime> {
-    std::fs::metadata(crate::config::path()).and_then(|m| m.modified()).ok()
 }
 
 fn default_sink_volume() -> Option<u8> {
@@ -38,6 +34,10 @@ pub fn run() {
         }
     });
 
+    for k in [crate::pad::Kind::MacroPad, crate::pad::Kind::DisplayPad] {
+        let tx = tx.clone();
+        std::thread::spawn(move || crate::pad::listen(k, tx));
+    }
     let mut cfg = Config::load();
     let mut cfg_time = mtime();
     let mut stats = Stats::new();

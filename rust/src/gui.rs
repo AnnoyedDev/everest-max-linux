@@ -3,6 +3,7 @@ use crate::device::Device;
 use crate::protocol::{self as p, Effect, MacroEvent};
 use crate::setup::{self, Check};
 use crate::theme::{self, Icons, ACCENT, BAD, DIM, INK, LINE, OK, WARN};
+use crate::pad::{self, Kind};
 use crate::{actions, apply, audio, fx, icons, images, keys, stats};
 use eframe::egui::{self, Color32, Pos2, Rect, RichText, Sense, Stroke, Vec2};
 use std::collections::BTreeMap;
@@ -16,14 +17,16 @@ enum Page {
     Touches,
     Ecrans,
     Dock,
+    Pads,
     Systeme,
 }
 
-const PAGES: [(Page, &str, &str); 5] = [
+const PAGES: [(Page, &str, &str); 6] = [
     (Page::Eclairage, "palette", "Éclairage"),
     (Page::Touches, "keyboard", "Touches & macros"),
     (Page::Ecrans, "screens", "Touches écran"),
     (Page::Dock, "dial", "Dock média"),
+    (Page::Pads, "pad", "Pads"),
     (Page::Systeme, "settings", "Système"),
 ];
 
@@ -83,9 +86,12 @@ pub struct App {
     erase: bool,
     selected: Option<&'static str>,
     state: Arc<Mutex<JobState>>,
-    tasks: mpsc::Sender<(String, Task)>,
+    tasks: mpsc::Sender<(String, Option<Kind>, Task)>,
     sinks: Vec<(String, String)>,
-    previews: [Option<(DisplayKey, egui::TextureHandle)>; 4],
+    previews: Vec<Option<(DisplayKey, egui::TextureHandle)>>,
+    pad_tab: Kind,
+    pad_sel: usize,
+    pad_page: usize,
     dock_preview: Option<(String, egui::TextureHandle)>,
     logo: Option<egui::TextureHandle>,
     icons: Icons,
@@ -220,8 +226,9 @@ fn learn_key() -> Result<(usize, u8), String> {
     Err(t("aucune touche détectée").into())
 }
 
-fn keyboard(ui: &mut egui::Ui, fill: &dyn Fn(&str, f32, f32) -> Color32, badge: &dyn Fn(&str) -> bool, selected: Option<&str>, paint: bool) -> Option<&'static str> {
-    let width = keys::ROWS.iter().map(|r| r.iter().map(|c| c.2).sum::<f32>()).fold(0.0, f32::max);
+fn keyboard(ui: &mut egui::Ui, layout: &str, fill: &dyn Fn(&str, f32, f32) -> Color32, badge: &dyn Fn(&str) -> bool, selected: Option<&str>, paint: bool) -> Option<&'static str> {
+    let rows = keys::rows(layout);
+    let width = rows.iter().map(|r| r.iter().map(|c| c.2).sum::<f32>()).fold(0.0, f32::max);
     let u = ((ui.available_width() - 28.0) / width).clamp(24.0, 46.0);
     let size = Vec2::new(width * u + 28.0, 6.0 * u + 28.0);
     let (rect, resp) = ui.allocate_exact_size(size, if paint { Sense::click_and_drag() } else { Sense::click() });
@@ -232,7 +239,7 @@ fn keyboard(ui: &mut egui::Ui, fill: &dyn Fn(&str, f32, f32) -> Color32, badge: 
     let pointer = resp.interact_pointer_pos().or_else(|| resp.hover_pos());
     let hit = resp.clicked() || (paint && resp.dragged());
     let mut out = None;
-    for (r, row) in keys::ROWS.iter().enumerate() {
+    for (r, row) in rows.iter().enumerate() {
         let mut x = rect.left() + 14.0;
         for &(label, name, w) in row.iter() {
             if !name.is_empty() {
@@ -299,11 +306,11 @@ impl App {
             }
         }
         let state = Arc::new(Mutex::new(JobState::default()));
-        let (tx, rx) = mpsc::channel::<(String, Task)>();
+        let (tx, rx) = mpsc::channel::<(String, Option<Kind>, Task)>();
         let st = state.clone();
         let ctx = cc.egui_ctx.clone();
         std::thread::spawn(move || {
-            for (what, task) in rx {
+            for (what, kind, task) in rx {
                 {
                     let mut s = st.lock().unwrap();
                     s.message = format!("{what}…");
@@ -315,7 +322,7 @@ impl App {
                     st.lock().unwrap().progress = Some(x);
                     ctx.request_repaint();
                 };
-                let r = Device::open().and_then(|mut d| task(&mut d, &progress));
+                let r = kind.map_or_else(Device::open, pad::open).and_then(|mut d| task(&mut d, &progress));
                 let mut s = st.lock().unwrap();
                 s.pending = s.pending.saturating_sub(1);
                 s.progress = None;
@@ -343,7 +350,10 @@ impl App {
             state,
             tasks: tx,
             sinks: actions::sinks(),
-            previews: Default::default(),
+            previews: vec![None; 4 + p::PAD_KEYS],
+            pad_tab: Kind::MacroPad,
+            pad_sel: 0,
+            pad_page: 0,
             dock_preview: None,
             logo,
             icons: Icons::default(),
@@ -399,14 +409,22 @@ impl App {
     }
 
     fn job(&self, what: &str, f: impl FnOnce(&mut Device, &dyn Fn(f32)) -> Result<(), String> + Send + 'static) {
+        self.job_on(None, what, f);
+    }
+
+    fn job_on(&self, kind: Option<Kind>, what: &str, f: impl FnOnce(&mut Device, &dyn Fn(f32)) -> Result<(), String> + Send + 'static) {
         self.state.lock().unwrap().pending += 1;
-        let _ = self.tasks.send((what.to_string(), Box::new(f)));
+        let _ = self.tasks.send((what.to_string(), kind, Box::new(f)));
     }
 
     fn say(&self, msg: impl Into<String>, ok: bool) {
         let mut s = self.state.lock().unwrap();
         s.message = msg.into();
         s.ok = Some(ok);
+    }
+
+    fn layout(&self) -> String {
+        if self.cfg.layout.is_empty() { keys::default_layout(crate::i18n::current()).to_string() } else { self.cfg.layout.clone() }
     }
 
     fn ic(&mut self, ctx: &egui::Context, name: &str) -> egui::Image<'static> {
@@ -552,6 +570,7 @@ impl App {
                 ui.label(RichText::new(t("Cet effet est animé par le service, qui est arrêté. Démarre-le dans Système.")).color(WARN));
             });
         }
+        let layout = self.layout();
         let img = self.ic(ctx, if custom { "brush" } else { "eye" });
         let title = if custom { t("Dessin — clique ou glisse sur les touches") } else { t("Aperçu en direct") };
         theme::card(ui, img, title, |ui| {
@@ -566,7 +585,7 @@ impl App {
                     None => preview(&e, &c, m, x, y, now),
                 }
             };
-            if let Some(name) = keyboard(ui, &fill, &|_| false, None, custom) {
+            if let Some(name) = keyboard(ui, &layout, &fill, &|_| false, None, custom) {
                 if let Some(k) = keys::by_name(name).filter(|k| (k.matrix as usize) < p::CUSTOM_KEYS) {
                     if self.erase {
                         self.cfg.custom.remove(&k.matrix);
@@ -638,72 +657,7 @@ impl App {
             });
             let img = self.ic(ctx, "settings");
             theme::card(&mut cols[1], img, t("Réglages"), |ui| {
-                let e = &mut self.cfg.effect;
-                let firmware = (e.effect < p::FIRMWARE_EFFECTS).then(|| p::EFFECTS[e.effect].1);
-                let si = fx::soft_index(e.effect);
-                let rainbow_ok = !matches!(firmware, Some(6 | 10 | 12)) && !matches!(si, Some(1 | 2));
-                if !rainbow_ok {
-                    e.rainbow = false;
-                }
-                let colors = !matches!(firmware, Some(10 | 12)) && !matches!(si, Some(1 | 2)) && !e.rainbow;
-                let color2 = matches!(firmware, Some(1 | 4)) || matches!(si, Some(0 | 6 | 8..=11));
-                let background = matches!(firmware, Some(3 | 6 | 9)) || matches!(si, Some(4..=11));
-                let speed = !matches!(firmware, Some(0 | 10 | 12)) && !matches!(si, Some(0 | 6..=11));
-                egui::Grid::new("fxs").num_columns(2).spacing(Vec2::new(14.0, 10.0)).show(ui, |ui| {
-                    ui.label(RichText::new(t("Luminosité")).color(DIM));
-                    ui.add(egui::Slider::new(&mut e.brightness, 0..=100).suffix(" %"));
-                    ui.end_row();
-                    if rainbow_ok {
-                        ui.label(RichText::new(t("Arc-en-ciel")).color(DIM));
-                        theme::toggle(ui, &mut e.rainbow, "");
-                        ui.end_row();
-                    }
-                    if colors {
-                        ui.label(RichText::new(t("Couleurs")).color(DIM));
-                        ui.horizontal(|ui| {
-                            egui::color_picker::color_edit_button_srgb(ui, &mut e.color);
-                            if color2 {
-                                let mut two = e.color2.is_some();
-                                if theme::toggle(ui, &mut two, t("Couleur 2")).changed() {
-                                    e.color2 = two.then_some([255, 255, 255]);
-                                }
-                                if let Some(c) = e.color2.as_mut() {
-                                    egui::color_picker::color_edit_button_srgb(ui, c);
-                                }
-                            }
-                        });
-                        ui.end_row();
-                    }
-                    if background && !matches!(firmware, Some(10 | 12)) {
-                        ui.label(RichText::new(t("Fond")).color(DIM));
-                        egui::color_picker::color_edit_button_srgb(ui, &mut e.background);
-                        ui.end_row();
-                    }
-                    if speed {
-                        ui.label(RichText::new(t("Vitesse")).color(DIM));
-                        ui.add(egui::Slider::new(&mut e.speed, 0..=100));
-                        ui.end_row();
-                    }
-                    let dirs: &[(u8, &str, &str)] = match firmware {
-                        Some(4) => &[(0, "arrow-right", t("Vers la droite")), (1, "arrow-left", t("Vers la gauche")), (2, "arrow-down", t("Vers le bas")), (3, "arrow-up", t("Vers le haut"))],
-                        Some(7) => &[(0, "reboot", t("Sens horaire")), (1, "undo", t("Sens antihoraire"))],
-                        _ => &[],
-                    };
-                    if !dirs.is_empty() {
-                        ui.label(RichText::new(t("Sens")).color(DIM));
-                        ui.horizontal(|ui| {
-                            for &(d, icon, tip) in dirs {
-                                let on = e.direction == d;
-                                let img = self.icons.image(ctx, icon, 16.0, if on { DARK_INK } else { ACCENT });
-                                let b = egui::Button::image(img).min_size(Vec2::new(36.0, 30.0)).fill(if on { ACCENT } else { Color32::TRANSPARENT });
-                                if ui.add(b).on_hover_text(tip).clicked() {
-                                    e.direction = d;
-                                }
-                            }
-                        });
-                        ui.end_row();
-                    }
-                });
+                Self::effect_settings(ui, &mut self.icons, ctx, &mut self.cfg.effect);
                 if fx::uses_audio(self.cfg.effect.effect) {
                     ui.add_space(6.0);
                     ui.label(RichText::new(t("Écouter")).color(DIM));
@@ -762,7 +716,79 @@ impl App {
         });
     }
 
+    fn effect_settings(ui: &mut egui::Ui, icons: &mut Icons, ctx: &egui::Context, e: &mut Effect) {
+        let firmware = (e.effect < p::FIRMWARE_EFFECTS).then(|| p::EFFECTS[e.effect].1);
+        let si = fx::soft_index(e.effect);
+        let rainbow_ok = !matches!(firmware, Some(6 | 10 | 12)) && !matches!(si, Some(1 | 2));
+        if !rainbow_ok {
+            e.rainbow = false;
+        }
+        let colors = !matches!(firmware, Some(10 | 12)) && !matches!(si, Some(1 | 2)) && !e.rainbow;
+        let color2 = matches!(firmware, Some(1 | 4)) || matches!(si, Some(0 | 6 | 8..=11));
+        let background = matches!(firmware, Some(3 | 6 | 9)) || matches!(si, Some(4..=11));
+        let speed = !matches!(firmware, Some(0 | 10 | 12)) && !matches!(si, Some(0 | 6..=11));
+        egui::Grid::new("fxs").num_columns(2).spacing(Vec2::new(14.0, 10.0)).show(ui, |ui| {
+            ui.label(RichText::new(t("Luminosité")).color(DIM));
+            ui.add(egui::Slider::new(&mut e.brightness, 0..=100).suffix(" %"));
+            ui.end_row();
+            if rainbow_ok {
+                ui.label(RichText::new(t("Arc-en-ciel")).color(DIM));
+                theme::toggle(ui, &mut e.rainbow, "");
+                ui.end_row();
+            }
+            if colors {
+                ui.label(RichText::new(t("Couleurs")).color(DIM));
+                ui.horizontal(|ui| {
+                    egui::color_picker::color_edit_button_srgb(ui, &mut e.color);
+                    if color2 {
+                        let mut two = e.color2.is_some();
+                        if theme::toggle(ui, &mut two, t("Couleur 2")).changed() {
+                            e.color2 = two.then_some([255, 255, 255]);
+                        }
+                        if let Some(c) = e.color2.as_mut() {
+                            egui::color_picker::color_edit_button_srgb(ui, c);
+                        }
+                    }
+                });
+                ui.end_row();
+            }
+            if background && !matches!(firmware, Some(10 | 12)) {
+                ui.label(RichText::new(t("Fond")).color(DIM));
+                egui::color_picker::color_edit_button_srgb(ui, &mut e.background);
+                ui.end_row();
+            }
+            if speed {
+                ui.label(RichText::new(t("Vitesse")).color(DIM));
+                ui.add(egui::Slider::new(&mut e.speed, 0..=100));
+                ui.end_row();
+            }
+            let dirs: &[(u8, &str, &str)] = match firmware {
+                Some(4) => &[(0, "arrow-right", t("Vers la droite")), (1, "arrow-left", t("Vers la gauche")), (2, "arrow-down", t("Vers le bas")), (3, "arrow-up", t("Vers le haut"))],
+                Some(7) => &[(0, "reboot", t("Sens horaire")), (1, "undo", t("Sens antihoraire"))],
+                _ => &[],
+            };
+            if !dirs.is_empty() {
+                ui.label(RichText::new(t("Sens")).color(DIM));
+                ui.horizontal(|ui| {
+                    for &(d, icon, tip) in dirs {
+                        let on = e.direction == d;
+                        let img = icons.image(ctx, icon, 16.0, if on { DARK_INK } else { ACCENT });
+                        let b = egui::Button::image(img).min_size(Vec2::new(36.0, 30.0)).fill(if on { ACCENT } else { Color32::TRANSPARENT });
+                        if ui.add(b).on_hover_text(tip).clicked() {
+                            e.direction = d;
+                        }
+                    }
+                });
+                ui.end_row();
+            }
+        });
+    }
+
     fn binding_editor(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, name: &'static str) {
+        if keys::by_name(name).is_some_and(|k| k.dll == 0) {
+            ui.label(RichText::new(t("Cette touche ne peut pas encore être remappée : son identifiant n'est pas connu.")).color(DIM));
+            return;
+        }
         let kinds: [(&str, &str); 6] = [("undo", t("Par défaut")), ("x", t("Désactivée")), ("arrow-right", t("Autre touche")), ("keyboard", t("Raccourci")), ("playpause", t("Fonction")), ("bolt", t("Macro"))];
         let cur = match self.cfg.bindings.entry(name.to_string()).or_default() {
             Binding::ParDefaut => 0,
@@ -925,11 +951,12 @@ impl App {
         theme::page_header(ui, t("Touches & macros"), t("Remappage, raccourcis, fonctions et macros stockés dans le clavier : ils marchent partout, même sans ce logiciel."));
         let img = self.ic(ctx, "keyboard");
         theme::card(ui, img, t("Clavier — clique une touche"), |ui| {
+            let layout = self.layout();
             let bindings = self.cfg.bindings.clone();
             let dk: Vec<bool> = self.cfg.display_keys.iter().map(|d| d.action != Action::Aucune).collect();
             let fill = |n: &str, _: f32, _: f32| binding_color(bindings.get(n));
             let badge = |n: &str| DISPLAY_KEY_NAMES.iter().position(|d| *d == n).is_some_and(|i| dk[i]);
-            if let Some(k) = keyboard(ui, &fill, &badge, self.selected, false) {
+            if let Some(k) = keyboard(ui, &layout, &fill, &badge, self.selected, false) {
                 self.selected = Some(k);
             }
             ui.horizontal_wrapped(|ui| {
@@ -984,10 +1011,10 @@ impl App {
         });
     }
 
-    fn action_editor(ui: &mut egui::Ui, icons: &mut Icons, ctx: &egui::Context, a: &mut Action, sinks: &[(String, String)], depth: usize) {
-        let kinds: [(&str, &str); 11] = [
+    fn action_editor(ui: &mut egui::Ui, icons: &mut Icons, ctx: &egui::Context, a: &mut Action, sinks: &[(String, String)], pages: &[String], depth: usize) {
+        let kinds: [(&str, &str); 12] = [
             ("x", t("Aucune")), ("terminal", t("Lancer un programme")), ("globe", t("Ouvrir un site")), ("folder", t("Ouvrir un dossier")), ("music", t("Jouer un son")),
-            ("keyboard", t("Raccourci clavier")), ("power", t("Système")), ("arrow-down", t("Appuyer une touche")), ("arrow-up", t("Relâcher une touche")), ("timer", t("Attendre")), ("layers", t("Plusieurs actions")),
+            ("keyboard", t("Raccourci clavier")), ("power", t("Système")), ("arrow-down", t("Appuyer une touche")), ("arrow-up", t("Relâcher une touche")), ("timer", t("Attendre")), ("layers", t("Plusieurs actions")), ("pad", t("Page du DisplayPad")),
         ];
         let cur = match a {
             Action::Aucune => 0,
@@ -1001,13 +1028,14 @@ impl App {
             Action::ToucheHaut { .. } => 8,
             Action::Delai { .. } => 9,
             Action::Multi { .. } => 10,
+            Action::Page { .. } => 11,
         };
         let mut sel = cur;
         ui.horizontal(|ui| {
             ui.add(icons.image(ctx, kinds[cur].0, 18.0, ACCENT));
             egui::ComboBox::from_id_salt("action").selected_text(kinds[cur].1).width(210.0).show_ui(ui, |ui| {
                 for (i, (icon, label)) in kinds.iter().enumerate() {
-                    if depth > 0 && i == 10 {
+                    if (depth > 0 && i == 10) || (pages.is_empty() && i == 11) {
                         continue;
                     }
                     let img = icons.image(ctx, icon, 16.0, ACCENT);
@@ -1029,6 +1057,7 @@ impl App {
                 8 => Action::ToucheHaut { key: "a".into() },
                 9 => Action::Delai { ms: 100 },
                 10 => Action::Multi { actions: vec![] },
+                11 => Action::Page { page: 0 },
                 _ => Action::Aucune,
             };
         }
@@ -1095,7 +1124,7 @@ impl App {
                         egui::Frame::default().stroke(Stroke::new(1.0_f32, LINE)).corner_radius(4).inner_margin(8).show(ui, |ui| {
                             ui.horizontal(|ui| {
                                 ui.label(RichText::new(format!("{:02}", i + 1)).font(theme::title_font(12.0)).color(ACCENT));
-                                ui.vertical(|ui| Self::action_editor(ui, icons, ctx, x, sinks, depth + 1));
+                                ui.vertical(|ui| Self::action_editor(ui, icons, ctx, x, sinks, pages, depth + 1));
                                 if ui.small_button("✖").clicked() {
                                     remove = Some(i);
                                 }
@@ -1110,69 +1139,93 @@ impl App {
                     actions.push(Action::Aucune);
                 }
             }
+            Action::Page { page } => {
+                let shown = pages.get(*page).cloned().unwrap_or_default();
+                egui::ComboBox::from_id_salt("page").selected_text(shown).width(220.0).show_ui(ui, |ui| {
+                    for (i, n) in pages.iter().enumerate() {
+                        ui.selectable_value(page, i, n);
+                    }
+                });
+            }
             Action::Aucune => {}
         }
+    }
+
+    fn art_mut(&mut self, slot: usize) -> &mut DisplayKey {
+        if slot < 4 { &mut self.cfg.display_keys[slot] } else { &mut self.cfg.displaypad.page_mut(self.pad_page)[slot - 4] }
+    }
+
+    fn art_preview(&mut self, ctx: &egui::Context, slot: usize) -> Option<egui::TextureId> {
+        let dk = self.art_mut(slot).clone();
+        let size = if slot < 4 { 72 } else { pad::ICON };
+        let stale = self.previews[slot].as_ref().is_none_or(|(d, _)| d.image != dk.image || d.icon != dk.icon || d.text != dk.text || d.fg != dk.fg || d.bg != dk.bg || d.grid != dk.grid);
+        if stale {
+            if let Ok(img) = images::render(size, size, &apply::art(&dk)) {
+                let tex = ctx.load_texture(format!("art{slot}"), egui::ColorImage::from_rgb([size as usize; 2], img.as_raw()), egui::TextureOptions::LINEAR);
+                self.previews[slot] = Some((dk, tex));
+            }
+        }
+        self.previews[slot].as_ref().map(|(_, t)| t.id())
+    }
+
+    fn art_editor(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, slot: usize) {
+        let dk = self.art_mut(slot).clone();
+        let tex = self.art_preview(ctx, slot);
+        ui.horizontal_top(|ui| {
+            let (r, _) = ui.allocate_exact_size(Vec2::splat(152.0), Sense::hover());
+            ui.painter().rect_filled(r, 10.0, Color32::from_rgb(0x03, 0x0E, 0x1C));
+            if let Some(tex) = tex {
+                ui.painter().image(tex, r.shrink(4.0), Rect::from_min_max(Pos2::ZERO, Pos2::new(1.0, 1.0)), Color32::WHITE);
+            }
+            ui.painter().rect_stroke(r, 10.0, Stroke::new(1.5_f32, ACCENT.gamma_multiply(0.6)), egui::StrokeKind::Inside);
+            theme::corner_ticks(ui.painter(), r.expand(4.0), ACCENT);
+            ui.vertical(|ui| {
+                let source = if !dk.image.is_empty() { 1 } else if !dk.icon.is_empty() { 0 } else { 2 };
+                if let Some(s) = segmented(ui, &mut self.icons, &[("star", t("Icône")), ("image", t("Image")), ("text", t("Texte"))], source) {
+                    match s {
+                        0 => {
+                            self.gallery = Some(slot);
+                            self.gallery_search.clear();
+                        }
+                        1 => {
+                            if let Some(f) = pick_file(t("Image de la touche"), true) {
+                                let dk = self.art_mut(slot);
+                                dk.image = f;
+                                dk.icon.clear();
+                            }
+                        }
+                        _ => {
+                            let dk = self.art_mut(slot);
+                            dk.image.clear();
+                            dk.icon.clear();
+                        }
+                    }
+                }
+                let dk = self.art_mut(slot);
+                ui.add(egui::TextEdit::multiline(&mut dk.text).hint_text(t("Texte (facultatif, s'affiche sous l'icône)")).desired_rows(2).desired_width(240.0));
+                ui.horizontal(|ui| {
+                    ui.label(RichText::new(t("Encre")).color(DIM));
+                    egui::color_picker::color_edit_button_srgb(ui, &mut dk.fg);
+                    ui.label(RichText::new(t("Fond")).color(DIM));
+                    egui::color_picker::color_edit_button_srgb(ui, &mut dk.bg);
+                    theme::toggle(ui, &mut dk.grid, t("Grille"));
+                });
+            });
+        });
     }
 
     fn display_key_card(&mut self, ui: &mut egui::Ui, ctx: &egui::Context, i: usize) {
         let img = self.ic(ctx, "screens");
         theme::card(ui, img, &tf!("Touche D{}", i + 1), |ui| {
-            let dk = self.cfg.display_keys[i].clone();
-            let stale = self.previews[i].as_ref().is_none_or(|(d, _)| d.image != dk.image || d.icon != dk.icon || d.text != dk.text || d.fg != dk.fg || d.bg != dk.bg || d.grid != dk.grid);
-            if stale {
-                if let Ok(img) = apply::display_key_image(&dk) {
-                    let tex = ctx.load_texture(format!("d{i}"), egui::ColorImage::from_rgb([72, 72], img.as_raw()), egui::TextureOptions::LINEAR);
-                    self.previews[i] = Some((dk.clone(), tex));
-                }
+            self.art_editor(ui, ctx, i);
+            let (profile, dk) = (self.cfg.profile, self.cfg.display_keys[i].clone());
+            if theme::icon_button(ui, &mut self.icons, "upload", t("Envoyer au clavier"), true).clicked() {
+                self.job(&tf!("Image D{}", i + 1), move |d, prog| apply::display_key(d, profile, i as u8, &dk, &mut |x| prog(x)));
             }
-            ui.horizontal_top(|ui| {
-                let (r, _) = ui.allocate_exact_size(Vec2::splat(152.0), Sense::hover());
-                ui.painter().rect_filled(r, 10.0, Color32::from_rgb(0x03, 0x0E, 0x1C));
-                if let Some((_, tex)) = &self.previews[i] {
-                    ui.painter().image(tex.id(), r.shrink(4.0), Rect::from_min_max(Pos2::ZERO, Pos2::new(1.0, 1.0)), Color32::WHITE);
-                }
-                ui.painter().rect_stroke(r, 10.0, Stroke::new(1.5_f32, ACCENT.gamma_multiply(0.6)), egui::StrokeKind::Inside);
-                theme::corner_ticks(ui.painter(), r.expand(4.0), ACCENT);
-                ui.vertical(|ui| {
-                    let source = if !self.cfg.display_keys[i].image.is_empty() { 1 } else if !self.cfg.display_keys[i].icon.is_empty() { 0 } else { 2 };
-                    if let Some(s) = segmented(ui, &mut self.icons, &[("star", t("Icône")), ("image", t("Image")), ("text", t("Texte"))], source) {
-                        let dk = &mut self.cfg.display_keys[i];
-                        match s {
-                            0 => {
-                                self.gallery = Some(i);
-                                self.gallery_search.clear();
-                            }
-                            1 => {
-                                if let Some(f) = pick_file(t("Image de la touche"), true) {
-                                    dk.image = f;
-                                    dk.icon.clear();
-                                }
-                            }
-                            _ => {
-                                dk.image.clear();
-                                dk.icon.clear();
-                            }
-                        }
-                    }
-                    let dk = &mut self.cfg.display_keys[i];
-                    ui.add(egui::TextEdit::multiline(&mut dk.text).hint_text(t("Texte (facultatif, s'affiche sous l'icône)")).desired_rows(2).desired_width(240.0));
-                    ui.horizontal(|ui| {
-                        ui.label(RichText::new(t("Encre")).color(DIM));
-                        egui::color_picker::color_edit_button_srgb(ui, &mut dk.fg);
-                        ui.label(RichText::new(t("Fond")).color(DIM));
-                        egui::color_picker::color_edit_button_srgb(ui, &mut dk.bg);
-                        theme::toggle(ui, &mut dk.grid, t("Grille"));
-                    });
-                    let (profile, dk2) = (self.cfg.profile, dk.clone());
-                    if theme::icon_button(ui, &mut self.icons, "upload", t("Envoyer au clavier"), true).clicked() {
-                        self.job(&tf!("Image D{}", i + 1), move |d, prog| apply::display_key(d, profile, i as u8, &dk2, &mut |x| prog(x)));
-                    }
-                });
-            });
             ui.add_space(8.0);
             ui.label(RichText::new(t("ACTION AU APPUI")).font(theme::title_font(11.0)).color(DIM));
             let had = self.cfg.display_keys[i].action != Action::Aucune;
-            Self::action_editor(ui, &mut self.icons, ctx, &mut self.cfg.display_keys[i].action, &self.sinks, 0);
+            Self::action_editor(ui, &mut self.icons, ctx, &mut self.cfg.display_keys[i].action, &self.sinks, &[], 0);
             let has = self.cfg.display_keys[i].action != Action::Aucune;
             if had != has || !self.cfg.display_key_in_sync(i) {
                 let b = apply::sync_display_key(&mut self.cfg, i);
@@ -1187,8 +1240,7 @@ impl App {
         });
     }
 
-    fn page_screens(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
-        theme::page_header(ui, t("Touches écran"), t("Les 4 écrans du pavé (72×72) : icône, image ou texte, et une action exécutée par l'ordinateur."));
+    fn service_warning(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
         if !self.service_on {
             ui.horizontal(|ui| {
                 ui.add(self.icons.image(ctx, "warn", 16.0, WARN));
@@ -1203,6 +1255,11 @@ impl App {
             });
             ui.add_space(6.0);
         }
+    }
+
+    fn page_screens(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        theme::page_header(ui, t("Touches écran"), t("Les 4 écrans du pavé (72×72) : icône, image ou texte, et une action exécutée par l'ordinateur."));
+        self.service_warning(ui, ctx);
         ui.columns(2, |cols| {
             for i in 0..4 {
                 let ui = &mut cols[i % 2];
@@ -1215,7 +1272,8 @@ impl App {
     fn gallery_window(&mut self, ctx: &egui::Context) {
         let Some(i) = self.gallery else { return };
         let mut open = true;
-        egui::Window::new(RichText::new(tf!("BIBLIOTHÈQUE D'ICÔNES — D{}", i + 1)).font(theme::title_font(14.0)).color(ACCENT))
+        let name = if i < 4 { format!("D{}", i + 1) } else { format!("K{}", i - 3) };
+        egui::Window::new(RichText::new(tf!("BIBLIOTHÈQUE D'ICÔNES — {}", name)).font(theme::title_font(14.0)).color(ACCENT))
             .open(&mut open).collapsible(false).resizable(false).default_width(760.0)
             .anchor(egui::Align2::CENTER_CENTER, [0.0, 0.0])
             .show(ctx, |ui| {
@@ -1229,9 +1287,9 @@ impl App {
                     egui::Grid::new("gallery").spacing(Vec2::splat(8.0)).show(ui, |ui| {
                         let mut n = 0;
                         for (name, label) in icons::LIBRARY.iter().filter(|(n, l)| q.is_empty() || t(l).to_lowercase().contains(&q) || l.to_lowercase().contains(&q) || n.contains(&q)) {
-                            let sel = self.cfg.display_keys[i].icon == *name;
+                            let sel = self.art_mut(i).icon == *name;
                             if theme::tile(ui, &mut self.icons, name, t(label), sel, Vec2::new(84.0, 76.0)).clicked() {
-                                let dk = &mut self.cfg.display_keys[i];
+                                let dk = self.art_mut(i);
                                 dk.icon = name.to_string();
                                 dk.image.clear();
                                 self.gallery = None;
@@ -1247,6 +1305,191 @@ impl App {
         if !open {
             self.gallery = None;
         }
+    }
+
+    fn page_names(&self) -> Vec<String> {
+        std::iter::once(t("Principale").to_string()).chain(self.cfg.displaypad.pages.iter().map(|p| p.name.clone())).collect()
+    }
+
+    fn page_tabs(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        let names = self.page_names();
+        self.pad_page = self.pad_page.min(names.len() - 1);
+        ui.horizontal_wrapped(|ui| {
+            ui.add(self.icons.image(ctx, "layers", 16.0, ACCENT));
+            ui.label(RichText::new(t("Pages")).color(DIM));
+            for (i, n) in names.iter().enumerate() {
+                if ui.selectable_label(self.pad_page == i, n).clicked() {
+                    self.pad_page = i;
+                }
+            }
+            if theme::icon_button(ui, &mut self.icons, "plus", t("Nouvelle page"), false).clicked() {
+                let n = self.cfg.displaypad.pages.len() + 1;
+                let mut page = crate::config::PadPage { name: tf!("Page {}", n), ..Default::default() };
+                page.keys[0] = DisplayKey { icon: "undo".into(), text: t("Retour").into(), action: Action::Page { page: 0 }, ..Default::default() };
+                self.cfg.displaypad.pages.push(page);
+                self.pad_page = n;
+            }
+        });
+        if self.pad_page > 0 {
+            ui.horizontal(|ui| {
+                ui.label(RichText::new(t("Nom de la page")).color(DIM));
+                ui.add(egui::TextEdit::singleline(&mut self.cfg.displaypad.pages[self.pad_page - 1].name).desired_width(200.0));
+                if theme::icon_button(ui, &mut self.icons, "trash", t("Supprimer la page"), false).clicked() {
+                    self.cfg.displaypad.remove_page(self.pad_page);
+                    self.pad_page -= 1;
+                }
+            });
+            ui.label(RichText::new(t("Pour ouvrir cette page, donne à une touche l'action « Page du DisplayPad ».")).small().color(DIM));
+        }
+        ui.add_space(6.0);
+    }
+
+    fn page_pads(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        theme::page_header(ui, t("Pads"), t("MacroPad et DisplayPad : 12 touches, chacune avec une action exécutée par l'ordinateur."));
+        let kind = self.pad_tab;
+        let display = kind == Kind::DisplayPad;
+        let on = pad::connected(kind);
+        ui.horizontal(|ui| {
+            if let Some(i) = segmented(ui, &mut self.icons, &[("pad", "MacroPad"), ("screens", "DisplayPad")], display as usize) {
+                self.pad_tab = [Kind::MacroPad, Kind::DisplayPad][i];
+                self.pad_sel = 0;
+            }
+            ui.add_space(12.0);
+            theme::status_dot(ui, on);
+            ui.label(RichText::new(if on { t("Branché") } else { t("Non détecté") }).color(if on { OK } else { DIM }));
+        });
+        ui.add_space(6.0);
+        self.service_warning(ui, ctx);
+        if display {
+            self.page_tabs(ui, ctx);
+        }
+        let name = |i: usize| if display { format!("K{}", i + 1) } else { format!("M{}", i + 1) };
+        let e = self.cfg.macropad.effect.clone();
+        let custom = e.effect == p::CUSTOM;
+        let now = self.start.elapsed().as_secs_f32();
+        let img = self.ic(ctx, "pad");
+        theme::card(ui, img, kind.name(), |ui| {
+            egui::Grid::new("padgrid").spacing(Vec2::splat(10.0)).show(ui, |ui| {
+                for i in 0..p::PAD_KEYS {
+                    let tex = if display { self.art_preview(ctx, 4 + i) } else { None };
+                    let (r, resp) = ui.allocate_exact_size(Vec2::splat(92.0), Sense::click());
+                    let painter = ui.painter();
+                    painter.rect_filled(r, 10.0, Color32::from_rgb(0x03, 0x0E, 0x1C));
+                    if let Some(tex) = tex {
+                        painter.image(tex, r.shrink(5.0), Rect::from_min_max(Pos2::ZERO, Pos2::new(1.0, 1.0)), Color32::WHITE);
+                    } else {
+                        let c = if custom { c32(self.cfg.macropad.colors[i]) } else { preview(&e, &BTreeMap::new(), 255, (i % 6) as f32 / 5.0, (i / 6) as f32, now) };
+                        painter.rect_filled(r.shrink(6.0), 8.0, c.gamma_multiply(0.45));
+                        painter.text(r.center(), egui::Align2::CENTER_CENTER, name(i), theme::title_font(18.0), INK);
+                    }
+                    let sel = self.pad_sel == i;
+                    painter.rect_stroke(r, 10.0, Stroke::new(if sel { 2.5_f32 } else { 1.0 }, if sel { ACCENT } else { LINE }), egui::StrokeKind::Inside);
+                    let has = if display { self.cfg.displaypad.page(self.pad_page)[i].action != Action::Aucune } else { self.cfg.macropad.actions[i] != Action::Aucune };
+                    if has {
+                        painter.circle_filled(r.right_top() + Vec2::new(-10.0, 10.0), 4.0, OK);
+                    }
+                    if resp.on_hover_cursor(egui::CursorIcon::PointingHand).clicked() {
+                        self.pad_sel = i;
+                    }
+                    if i % 6 == 5 {
+                        ui.end_row();
+                    }
+                }
+            });
+        });
+        if !display && !matches!(e.effect, 0 | 6 | 8) {
+            ctx.request_repaint_after(Duration::from_millis(33));
+        }
+        ui.add_space(6.0);
+        let sel = self.pad_sel;
+        ui.columns(2, |cols| {
+            let img = self.ic(ctx, if display { "screens" } else { "keyboard" });
+            theme::card(&mut cols[0], img, &tf!("Touche {}", name(sel)), |ui| {
+                if display {
+                    self.art_editor(ui, ctx, 4 + sel);
+                    ui.add_space(8.0);
+                }
+                ui.label(RichText::new(t("ACTION AU APPUI")).font(theme::title_font(11.0)).color(DIM));
+                let names = if display { self.page_names() } else { Vec::new() };
+                let a = if display { &mut self.cfg.displaypad.page_mut(self.pad_page)[sel].action } else { &mut self.cfg.macropad.actions[sel] };
+                Self::action_editor(ui, &mut self.icons, ctx, a, &self.sinks, &names, 0);
+                if *a != Action::Aucune && theme::icon_button(ui, &mut self.icons, "play", t("Tester l'action"), false).clicked() {
+                    let a = a.clone();
+                    std::thread::spawn(move || actions::Runner::new().run(&a));
+                }
+                if !display && custom {
+                    ui.add_space(8.0);
+                    ui.horizontal(|ui| {
+                        ui.label(RichText::new(t("Couleur de la touche")).color(DIM));
+                        egui::color_picker::color_edit_button_srgb(ui, &mut self.cfg.macropad.colors[sel]);
+                        if theme::icon_button(ui, &mut self.icons, "fill", t("Tout remplir"), false).clicked() {
+                            self.cfg.macropad.colors = [self.cfg.macropad.colors[sel]; p::PAD_KEYS];
+                        }
+                    });
+                }
+            });
+            if display {
+                let img = self.ic(ctx, "sun");
+                theme::card(&mut cols[1], img, t("Écrans du DisplayPad"), |ui| {
+                    ui.horizontal(|ui| {
+                        ui.label(RichText::new(t("Luminosité")).color(DIM));
+                        for v in [0u8, 25, 50, 75, 100] {
+                            ui.selectable_value(&mut self.cfg.displaypad.brightness, v, format!("{v} %"));
+                        }
+                    });
+                    ui.add_space(6.0);
+                    if theme::icon_button(ui, &mut self.icons, "image", t("Une image sur les 12 touches"), false).clicked() {
+                        if let Some(f) = pick_file(t("Image à découper"), true) {
+                            match pad::split(&f, self.pad_page) {
+                                Ok(paths) => {
+                                    for (k, path) in self.cfg.displaypad.page_mut(self.pad_page).iter_mut().zip(paths) {
+                                        k.image = path;
+                                        k.icon.clear();
+                                    }
+                                }
+                                Err(e) => self.say(e, false),
+                            }
+                        }
+                    }
+                    ui.label(RichText::new(t("Un GIF animé sur une touche est joué par le service.")).small().color(DIM));
+                    ui.add_space(8.0);
+                    if self.service_on {
+                        ui.label(RichText::new(t("Le service tient le DisplayPad à jour tout seul : les changements s'affichent en une seconde, et il renvoie tout à chaque branchement.")).small().color(OK));
+                    } else {
+                        let (keys, b) = (self.cfg.displaypad.page(self.pad_page).clone(), self.cfg.displaypad.brightness);
+                        if theme::icon_button(ui, &mut self.icons, "upload", t("Envoyer au DisplayPad"), true).clicked() {
+                            self.job_on(Some(Kind::DisplayPad), t("Images du DisplayPad"), move |d, prog| pad::push_display(d, &keys, b, prog));
+                        }
+                    }
+                });
+            } else {
+                let img = self.ic(ctx, "palette");
+                theme::card(&mut cols[1], img, t("Éclairage"), |ui| {
+                    egui::Grid::new("padfx").spacing(Vec2::splat(8.0)).show(ui, |ui| {
+                        for (i, (n, _, _)) in p::EFFECTS.iter().enumerate() {
+                            if theme::tile(ui, &mut self.icons, EFFECT_ICONS[i], t(n), self.cfg.macropad.effect.effect == i, Vec2::new(104.0, 62.0)).clicked() {
+                                self.cfg.macropad.effect.effect = i;
+                            }
+                            if i % 3 == 2 {
+                                ui.end_row();
+                            }
+                        }
+                    });
+                    ui.add_space(8.0);
+                    Self::effect_settings(ui, &mut self.icons, ctx, &mut self.cfg.macropad.effect);
+                    ui.add_space(8.0);
+                    ui.horizontal(|ui| {
+                        theme::toggle(ui, &mut self.save_flash, t("Mémoriser dans le pad"));
+                        ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                            if theme::icon_button(ui, &mut self.icons, "send", t("Appliquer"), true).clicked() {
+                                let (e, c, save) = (self.cfg.macropad.effect.clone(), self.cfg.macropad.colors, self.save_flash);
+                                self.job_on(Some(Kind::MacroPad), t("Éclairage du MacroPad"), move |d, _| pad::macropad_lighting(d, &e, &c, save));
+                            }
+                        });
+                    });
+                });
+            }
+        });
     }
 
     fn page_dock(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
@@ -1484,6 +1727,18 @@ impl App {
                     }
                 });
             });
+            let img = self.ic(ctx, "keyboard");
+            theme::card(&mut cols[1], img, t("Disposition du clavier"), |ui| {
+                let cur = self.layout();
+                let shown = keys::LAYOUTS.iter().find(|l| l.0 == cur).map_or(cur.as_str(), |l| l.1);
+                egui::ComboBox::from_id_salt("layout").selected_text(shown).width(240.0).show_ui(ui, |ui| {
+                    for (code, name) in keys::LAYOUTS {
+                        ui.selectable_value(&mut self.cfg.layout, code.to_string(), name);
+                    }
+                });
+                ui.label(RichText::new(t("Change seulement l'affichage des touches dans l'appli, pas le clavier lui-même.")).small().color(DIM));
+            });
+            cols[1].add_space(8.0);
             let img = self.ic(ctx, "settings");
             theme::card(&mut cols[1], img, t("Service"), |ui| {
                 ui.horizontal(|ui| {
@@ -1579,7 +1834,7 @@ impl App {
                                     remove = Some(i);
                                 }
                             });
-                            Self::action_editor(ui, &mut self.icons, ctx, &mut hk.action, &self.sinks, 0);
+                            Self::action_editor(ui, &mut self.icons, ctx, &mut hk.action, &self.sinks, &[], 0);
                         });
                     });
                 }
@@ -1725,6 +1980,7 @@ impl eframe::App for App {
                 Page::Touches => self.page_keys(ui, ctx),
                 Page::Ecrans => self.page_screens(ui, ctx),
                 Page::Dock => self.page_dock(ui, ctx),
+                Page::Pads => self.page_pads(ui, ctx),
                 Page::Systeme => self.page_system(ui, ctx),
             });
         });

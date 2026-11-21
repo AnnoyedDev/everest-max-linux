@@ -28,6 +28,7 @@ Tu as un Everest Max, tu es passé sous Linux, et tu t'es rendu compte que Base 
 - **Touches & macros** : remapper n'importe quelle touche, la désactiver, lui mettre un raccourci, une fonction multimédia / souris / profil, ou une macro. Tout est stocké dans le clavier, donc ça marche même sans l'appli.
 - **Les 4 touches écran du pavé (D1–D4)** : une icône (76 fournies), ton image ou du texte, plus une action au clic : lancer un programme, ouvrir un site, jouer un son sur la sortie de ton choix (avec réglage du volume jusqu'à 150 %), raccourci, macro, verrouiller, éteindre…
 - **Dock média** (le module avec l'écran rond) : ton image en écran de veille, l'heure, le volume du système, et les infos PC (CPU, GPU, disque, internet, RAM, frappes par minute) qui s'affichent enfin.
+- **MacroPad et DisplayPad** : une action sur chacune des 12 touches, l'éclairage du MacroPad (effets intégrés et couleur par touche), et une icône, image ou texte sur chaque touche du DisplayPad. Pas encore testé sur du vrai matériel (je n'ai aucun des deux), donc les retours sont les bienvenus.
 - **Profils** : activer / désactiver les profils du clavier (clic droit sur le numéro).
 - **Installation guidée** : au premier lancement, l'appli vérifie ce qui manque (règle udev, service, raccourci dans le menu…) et s'en occupe. Elle te prévient aussi quand une mise à jour est à installer.
 - **3 langues** : français, anglais, japonais.

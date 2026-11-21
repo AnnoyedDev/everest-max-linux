@@ -130,7 +130,6 @@ Le service est arrêté : les actions ne se déclencheront pas.	The service is s
 Démarrer le service	Start the service	サービスを起動
 Service démarré	Service started	サービスを起動しました
 Service : {}	Service: {}	サービス：{}
-BIBLIOTHÈQUE D'ICÔNES — D{}	ICON LIBRARY — D{}	アイコンライブラリ — D{}
 Dock média	Media dock	メディアドック
 Le module à gauche du clavier : écran rond, molette et touches média.	The module on the left of the keyboard: round screen, dial and media keys.	キーボード左側のモジュールです：丸い画面、ダイヤル、メディアキー。
 Écran de veille	Screensaver	スクリーンセーバー
@@ -353,3 +352,39 @@ Aidez-moi à traduire ce logiciel dans d'autres langues ! Rendez-vous sur GitHub
 Texte (facultatif, s'affiche sous l'icône)	Text (optional, shown under the icon)	テキスト（任意・アイコンの下に表示されます）
 Rechercher…	Search…	検索…
 Ouvrir GitHub	Open GitHub	GitHubを開く
+Pads	Pads	パッド
+MacroPad et DisplayPad : 12 touches, chacune avec une action exécutée par l'ordinateur.	MacroPad and DisplayPad: 12 keys, each with an action your computer runs.	MacroPad と DisplayPad：12 個のキーそれぞれに、PC で実行するアクションを割り当てられます。
+Branché	Connected	接続中
+Non détecté	Not detected	見つかりません
+Couleur de la touche	Key color	キーの色
+Écrans du DisplayPad	DisplayPad screens	DisplayPad の画面
+Envoyer au DisplayPad	Send to DisplayPad	DisplayPad に送信
+Images du DisplayPad	DisplayPad pictures	DisplayPad の画像
+Mémoriser dans le pad	Save to the pad	パッドに保存する
+Éclairage du MacroPad	MacroPad lighting	MacroPad のライティング
+BIBLIOTHÈQUE D'ICÔNES — {}	ICON LIBRARY — {}	アイコンライブラリ — {}
+le DisplayPad ne répond pas	the DisplayPad isn't responding	DisplayPad が応答しません
+périphérique USB introuvable	USB device not found	USB デバイスが見つかりません
+DisplayPad débranché	DisplayPad unplugged	DisplayPad が外れています
+{} introuvable (branché ? règle udev à jour ?)	{} not found (plugged in? udev rule up to date?)	{} が見つかりません（接続されていますか？udev ルールは最新ですか？）
+{}: {} — règle udev à mettre à jour (Système)	{}: {} — the udev rule needs an update (System)	{}: {} — udev ルールの更新が必要です（システム）
+interface d'images occupée : {}	picture interface busy: {}	画像インターフェースが使用中です：{}
+envoi des pixels : {}	sending pixels: {}	ピクセル送信：{}
+touche {} : le DisplayPad n'est pas prêt	key {}: the DisplayPad isn't ready	キー {}：DisplayPad の準備ができていません
+touche {} : transfert non confirmé	key {}: transfer not confirmed	キー {}：転送が確認できませんでした
+Cette touche ne peut pas encore être remappée : son identifiant n'est pas connu.	This key can't be remapped yet: its ID isn't known.	このキーはまだリマップできません。キーの ID がわかっていないんです。
+Page du DisplayPad	DisplayPad page	DisplayPad のページ
+Principale	Main	メイン
+Pages	Pages	ページ
+Nouvelle page	New page	新しいページ
+Retour	Back	戻る
+Nom de la page	Page name	ページ名
+Supprimer la page	Delete page	ページを削除
+Pour ouvrir cette page, donne à une touche l'action « Page du DisplayPad ».	To open this page, give a key the "DisplayPad page" action.	このページを開くには、どれかのキーに「DisplayPad のページ」アクションを割り当ててくださいね。
+Une image sur les 12 touches	One picture across all 12 keys	12 キーに 1 枚の画像
+Image à découper	Picture to split	分割する画像
+Un GIF animé sur une touche est joué par le service.	An animated GIF on a key is played by the service.	キーに設定したアニメーション GIF は、サービスが再生します。
+Le service tient le DisplayPad à jour tout seul : les changements s'affichent en une seconde, et il renvoie tout à chaque branchement.	The service keeps the DisplayPad up to date on its own: changes show up within a second, and it sends everything again whenever you plug it in.	DisplayPad はサービスが自動で最新の状態にしてくれます。変更は 1 秒ほどで反映されて、つなぎ直したときも全部送り直してくれますよ。
+Disposition du clavier	Keyboard layout	キーボード配列
+Change seulement l'affichage des touches dans l'appli, pas le clavier lui-même.	Only changes how the keys are shown in the app, not the keyboard itself.	アプリでのキーの表示が変わるだけで、キーボード本体の設定は変わりません。
+Page {}	Page {}	ページ {}

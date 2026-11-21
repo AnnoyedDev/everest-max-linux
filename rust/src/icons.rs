@@ -4,6 +4,7 @@ const ICONS: &[(&str, &str)] = &[
     ("bulb", r#"<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.3 1.1 2.2h5c0-.9.4-1.6 1.1-2.2A6 6 0 0 0 12 3z"/>"#),
     ("keyboard", r#"<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h.01M18 14h.01M9 14h6"/>"#),
     ("screens", r#"<rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="8" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/><rect x="13" y="13" width="8" height="8" rx="1.5"/>"#),
+    ("pad", r#"<rect x="2.5" y="5" width="5" height="5" rx="1"/><rect x="9.5" y="5" width="5" height="5" rx="1"/><rect x="16.5" y="5" width="5" height="5" rx="1"/><rect x="2.5" y="14" width="5" height="5" rx="1"/><rect x="9.5" y="14" width="5" height="5" rx="1"/><rect x="16.5" y="14" width="5" height="5" rx="1"/>"#),
     ("dial", r#"<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3"/><path d="M12 3.5v3.5"/>"#),
     ("settings", r#"<circle cx="12" cy="12" r="3"/><path d="M10.3 2.5h3.4l.5 2.6 1.8.8 2.2-1.5 2.4 2.4-1.5 2.2.8 1.8 2.6.5v3.4l-2.6.5-.8 1.8 1.5 2.2-2.4 2.4-2.2-1.5-1.8.8-.5 2.6h-3.4l-.5-2.6-1.8-.8-2.2 1.5-2.4-2.4 1.5-2.2-.8-1.8-2.6-.5v-3.4l2.6-.5.8-1.8-1.5-2.2 2.4-2.4 2.2 1.5 1.8-.8z"/>"#),
     ("check", r#"<path d="M5 12.5l4.5 4.5L19 7"/>"#),

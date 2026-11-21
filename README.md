@@ -28,6 +28,7 @@ Got an Everest Max, switched to Linux, then found out Base Camp is Windows-only?
 - **Keys & macros**: remap any key, turn it off, give it a shortcut, a media / mouse / profile function, or a macro. It's all saved on the keyboard, so it keeps working without the app.
 - **The 4 display keys on the numpad (D1–D4)**: an icon (76 included), your own picture or some text, plus an action when you press it: launch an app, open a website, play a sound on any output (volume up to 150 %), a shortcut, a macro, lock, shut down…
 - **Media dock** (the bit with the round screen): your picture as a screensaver, the clock, system volume, and the PC info screens (CPU, GPU, disk, internet, RAM, keys per minute) finally showing real numbers.
+- **MacroPad & DisplayPad**: the 12 keys of each pad get an action, the MacroPad gets its lighting (built-in effects and per-key colors), and the DisplayPad gets an icon, picture or text on every key. Untested on real hardware for now (I don't own either pad), so feedback is very welcome.
 - **Profiles**: turn the keyboard's profiles on or off (right-click a profile number).
 - **Guided setup**: on first launch the app checks what's missing (udev rule, background service, menu entry…) and sorts it out. It also tells you when there's an update to install.
 - **3 languages**: English, French and Japanese.

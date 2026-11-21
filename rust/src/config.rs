@@ -1,4 +1,4 @@
-use crate::protocol::{Effect, MacroEvent, CUSTOM_KEYS};
+use crate::protocol::{Effect, MacroEvent, CUSTOM_KEYS, PAD_KEYS};
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 use std::path::PathBuf;
@@ -18,6 +18,7 @@ pub enum Action {
     ToucheHaut { key: String },
     Delai { ms: u64 },
     Multi { actions: Vec<Action> },
+    Page { page: usize },
 }
 
 fn full_volume() -> u16 {
@@ -65,6 +66,62 @@ impl Default for DisplayKey {
     }
 }
 
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, Default)]
+#[serde(default)]
+pub struct MacroPadCfg {
+    pub effect: Effect,
+    pub colors: [[u8; 3]; PAD_KEYS],
+    pub actions: [Action; PAD_KEYS],
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, Default)]
+#[serde(default)]
+pub struct PadPage {
+    pub name: String,
+    pub keys: [DisplayKey; PAD_KEYS],
+}
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct DisplayPadCfg {
+    pub keys: [DisplayKey; PAD_KEYS],
+    pub brightness: u8,
+    pub pages: Vec<PadPage>,
+}
+
+impl Default for DisplayPadCfg {
+    fn default() -> Self {
+        DisplayPadCfg { keys: Default::default(), brightness: 100, pages: Vec::new() }
+    }
+}
+
+impl DisplayPadCfg {
+    pub fn page(&self, i: usize) -> &[DisplayKey; PAD_KEYS] {
+        self.pages.get(i.wrapping_sub(1)).map_or(&self.keys, |p| &p.keys)
+    }
+
+    pub fn page_mut(&mut self, i: usize) -> &mut [DisplayKey; PAD_KEYS] {
+        match i.checked_sub(1).and_then(|j| self.pages.get_mut(j)) {
+            Some(p) => &mut p.keys,
+            None => &mut self.keys,
+        }
+    }
+
+    pub fn remove_page(&mut self, i: usize) {
+        if i == 0 || i > self.pages.len() {
+            return;
+        }
+        self.pages.remove(i - 1);
+        for n in 0..=self.pages.len() {
+            for k in self.page_mut(n).iter_mut() {
+                if let Action::Page { page } = &mut k.action {
+                    *page = if *page == i { 0 } else if *page > i { *page - 1 } else { *page };
+                }
+            }
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct HostKey {
     pub name: String,
@@ -92,6 +149,9 @@ pub struct Config {
     pub audio_sources: Vec<String>,
     pub lang: String,
     pub skip_setup: bool,
+    pub macropad: MacroPadCfg,
+    pub displaypad: DisplayPadCfg,
+    pub layout: String,
 }
 
 impl Default for Config {
@@ -113,6 +173,9 @@ impl Default for Config {
             audio_sources: Vec::new(),
             lang: String::new(),
             skip_setup: false,
+            macropad: MacroPadCfg::default(),
+            displaypad: DisplayPadCfg::default(),
+            layout: String::new(),
         }
     }
 }
@@ -132,6 +195,10 @@ pub fn path() -> PathBuf {
     let base = std::env::var_os("XDG_CONFIG_HOME").map(PathBuf::from)
         .unwrap_or_else(|| PathBuf::from(std::env::var_os("HOME").unwrap_or_default()).join(".config"));
     base.join("everest-basecamp/config.json")
+}
+
+pub fn mtime() -> Option<std::time::SystemTime> {
+    std::fs::metadata(path()).and_then(|m| m.modified()).ok()
 }
 
 impl Config {
@@ -173,6 +240,21 @@ impl Config {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn removing_a_page_fixes_page_links() {
+        let mut d = super::DisplayPadCfg::default();
+        d.pages = vec![Default::default(), Default::default(), Default::default()];
+        d.keys[0].action = super::Action::Page { page: 3 };
+        d.keys[1].action = super::Action::Page { page: 2 };
+        d.pages[2].keys[0].action = super::Action::Page { page: 0 };
+        d.remove_page(2);
+        assert_eq!(d.pages.len(), 2);
+        assert_eq!(d.keys[0].action, super::Action::Page { page: 2 });
+        assert_eq!(d.keys[1].action, super::Action::Page { page: 0 });
+        assert_eq!(d.page(2)[0].action, super::Action::Page { page: 0 });
+        assert!(std::ptr::eq(d.page(9), &d.keys));
+    }
+
     #[test]
     fn old_sound_action_keeps_full_volume() {
         let a: super::Action = serde_json::from_str(r#"{"type":"Son","file":"a.mp3","sink":""}"#).unwrap();

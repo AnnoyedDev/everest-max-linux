@@ -11,6 +11,7 @@ mod gui;
 mod icons;
 mod images;
 mod keys;
+mod pad;
 mod protocol;
 mod setup;
 mod stats;
