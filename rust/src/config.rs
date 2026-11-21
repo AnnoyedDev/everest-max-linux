@@ -171,6 +171,7 @@ pub struct Config {
     pub profiles: BTreeMap<u8, Profile>,
     pub fn_key: Option<(usize, u8)>,
     pub dark_when_locked: bool,
+    pub sync_devices: bool,
 }
 
 impl Default for Config {
@@ -200,6 +201,7 @@ impl Default for Config {
             profiles: BTreeMap::new(),
             fn_key: None,
             dark_when_locked: false,
+            sync_devices: false,
         }
     }
 }

@@ -86,3 +86,10 @@ pub fn set_dock(dev: &mut Device, menus: u8, color: [u8; 3], setup: u8, saver: u
     dev.set_extend_info(&info)?;
     Ok(info)
 }
+
+pub fn set_menu_color(dev: &mut Device, color: [u8; 3]) -> Result<[u8; 29]> {
+    let mut info = dev.extend_info()?;
+    info[p::EXT_MENU_COLOR..p::EXT_MENU_COLOR + 3].copy_from_slice(&color);
+    dev.set_extend_info(&info)?;
+    Ok(info)
+}

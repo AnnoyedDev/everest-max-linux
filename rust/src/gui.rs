@@ -736,10 +736,33 @@ impl App {
                         if theme::icon_button(ui, &mut self.icons, "send", t("Appliquer"), true).clicked() {
                             let (cfg, save) = (self.cfg.clone(), self.save_flash);
                             self.job(t("Éclairage"), move |d, _| apply::lighting(d, &cfg, save));
+                            if self.cfg.sync_devices {
+                                self.sync_devices(save);
+                            }
                         }
                     });
                 });
+                theme::toggle(ui, &mut self.cfg.sync_devices, t("Appliquer aussi au MacroPad et à la couleur des menus du dock"));
             });
+        });
+    }
+
+    fn sync_devices(&mut self, save: bool) {
+        let e = self.cfg.effect.clone();
+        if e.effect < p::FIRMWARE_EFFECTS && e.effect != p::CUSTOM {
+            self.cfg.macropad.effect = Effect { variant: 0, ..e.clone() };
+            if pad::connected(Kind::MacroPad) {
+                let (m, c) = (self.cfg.macropad.effect.clone(), self.cfg.macropad.colors);
+                self.job_on(Some(Kind::MacroPad), t("Éclairage du MacroPad"), move |d, _| pad::macropad_lighting(d, &m, &c, save));
+            }
+        }
+        let ext = self.ext.clone();
+        if let Some(ed) = self.dock_edit.as_mut() {
+            ed.color = e.color;
+        }
+        self.job(t("Couleur des menus"), move |d, _| {
+            *ext.lock().unwrap() = Some(apply::set_menu_color(d, e.color)?);
+            Ok(())
         });
     }
 

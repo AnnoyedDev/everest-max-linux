@@ -432,3 +432,4 @@ aucune	none	なし
 Maintenue, elle fait faire leur action « avec Fn » aux touches apprises.	While held, learned keys run their "with Fn" action.	押しているあいだ、覚えさせたキーが「Fn あり」のアクションを実行します。
 AVEC FN	WITH FN	Fn あり
 Éteindre l'éclairage quand la session est verrouillée	Turn the lights off while the session is locked	セッションのロック中はライティングを消す
+Appliquer aussi au MacroPad et à la couleur des menus du dock	Also apply to the MacroPad and the dock menu color	MacroPad とドックのメニューの色にも適用する
