@@ -1845,6 +1845,7 @@ impl App {
                         self.refresh();
                     }
                 });
+                theme::toggle(ui, &mut self.cfg.dark_when_locked, t("Éteindre l'éclairage quand la session est verrouillée"));
             });
             cols[1].add_space(8.0);
             let img = self.ic(ctx, "profile");

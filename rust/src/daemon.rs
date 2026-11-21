@@ -5,10 +5,29 @@ use crate::device::Device;
 use crate::stats::Stats;
 use crate::{apply, fx, protocol as p};
 use std::collections::VecDeque;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::mpsc;
 use std::time::{Duration, Instant};
 
 const FRAME: Duration = Duration::from_millis(33);
+pub static LOCKED: AtomicBool = AtomicBool::new(false);
+
+pub const OFF: p::Effect = p::Effect { effect: 8, brightness: 0, speed: 0, direction: 0, color: [0; 3], color2: None, background: [0; 3], rainbow: false, variant: 0 };
+
+fn session_locked(sid: &mut Option<String>) -> bool {
+    let run = |args: &[&str]| std::process::Command::new("loginctl").args(args).output().ok().map(|o| String::from_utf8_lossy(&o.stdout).trim().to_string()).filter(|s| !s.is_empty());
+    if sid.is_none() {
+        *sid = run(&["show-user", &unsafe { libc::getuid() }.to_string(), "-p", "Display", "--value"]);
+    }
+    let Some(id) = sid.clone() else { return false };
+    match run(&["show-session", &id, "-p", "LockedHint", "--value"]) {
+        Some(v) => v == "yes",
+        None => {
+            *sid = None;
+            false
+        }
+    }
+}
 
 fn bit(r: &[u8; 64], byte: usize, bit: u8) -> bool {
     r[byte] >> bit & 1 == 1
@@ -42,6 +61,7 @@ pub fn run() {
     let mut cfg_time = mtime();
     let mut stats = Stats::new();
     let start = Instant::now();
+    let mut sid = None;
     loop {
         let mut dev = match Device::open() {
             Ok(d) => d,
@@ -63,8 +83,9 @@ pub fn run() {
         let mut next_frame = Instant::now();
         let mut soft_active = false;
         let mut failures = 0;
+        let mut locked = false;
         loop {
-            let soft = fx::soft_index(cfg.effect.effect).is_some();
+            let soft = !locked && fx::soft_index(cfg.effect.effect).is_some();
             let wait = if soft { next_frame.saturating_duration_since(Instant::now()).min(Duration::from_millis(250)) } else { Duration::from_millis(250) };
             while let Some(r) = dev.read(wait) {
                 if r[0] == 0x01 {
@@ -126,6 +147,13 @@ pub fn run() {
                 if mtime() != cfg_time {
                     cfg_time = mtime();
                     cfg = Config::load();
+                }
+                let now_locked = cfg.dark_when_locked && session_locked(&mut sid);
+                if now_locked != locked {
+                    locked = now_locked;
+                    LOCKED.store(locked, Ordering::Relaxed);
+                    let _ = if locked { dev.set_effect(cfg.profile, &OFF, false) } else { apply::lighting(&mut dev, &cfg, false) };
+                    soft_active = false;
                 }
                 let min = unsafe { libc::time(std::ptr::null_mut()) / 60 } as i32;
                 if cfg.sync_clock && min != last_min {

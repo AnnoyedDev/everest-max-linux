@@ -242,6 +242,7 @@ pub fn listen(k: Kind, tx: mpsc::Sender<Action>) {
         let display = k == Kind::DisplayPad;
         let (mut page, mut shown, mut anim) = (0usize, None, Vec::new());
         let mut brightness = cfg.displaypad.brightness;
+        let mut locked = false;
         if display {
             let _ = d.send(&p::pad_brightness(brightness));
             show(&mut d, &cfg, page, &mut shown, &mut anim);
@@ -280,12 +281,20 @@ pub fn listen(k: Kind, tx: mpsc::Sender<Action>) {
                     cfg = Config::load();
                     if display {
                         page = page.min(cfg.displaypad.pages.len());
-                        if cfg.displaypad.brightness != brightness {
-                            brightness = cfg.displaypad.brightness;
-                            let _ = d.send(&p::pad_brightness(brightness));
-                        }
                         show(&mut d, &cfg, page, &mut shown, &mut anim);
                     }
+                }
+                let now_locked = crate::daemon::LOCKED.load(std::sync::atomic::Ordering::Relaxed);
+                if display {
+                    let want = if now_locked { 0 } else { cfg.displaypad.brightness };
+                    if want != brightness {
+                        brightness = want;
+                        let _ = d.send(&p::pad_brightness(brightness));
+                    }
+                } else if now_locked != locked {
+                    locked = now_locked;
+                    let m = &cfg.macropad;
+                    let _ = macropad_lighting(&mut d, if locked { &crate::daemon::OFF } else { &m.effect }, &m.colors, false);
                 }
             }
         }

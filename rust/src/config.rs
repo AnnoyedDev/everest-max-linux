@@ -170,6 +170,7 @@ pub struct Config {
     pub obs_password: String,
     pub profiles: BTreeMap<u8, Profile>,
     pub fn_key: Option<(usize, u8)>,
+    pub dark_when_locked: bool,
 }
 
 impl Default for Config {
@@ -198,6 +199,7 @@ impl Default for Config {
             obs_password: String::new(),
             profiles: BTreeMap::new(),
             fn_key: None,
+            dark_when_locked: false,
         }
     }
 }
