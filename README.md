@@ -25,11 +25,15 @@ Got an Everest Max, switched to Linux, then found out Base Camp is Windows-only?
 - **Lighting**: all 9 built-in effects (Wave, Tornado, Breathing, Reactive, Matrix, Yeti…) with colors, speed, direction and rainbow mode, plus a live animated preview before you send anything.
 - **12 extra effects driven by your PC**: Aurora, Fire, Rain, Stars, Gradient, Audio spectrum, Audio pulse, and CPU / GPU / RAM / internet load bars right on your keys.
 - **Per-key painting**: click or drag across the keyboard to paint it.
-- **Keys & macros**: remap any key, turn it off, give it a shortcut, a media / mouse / profile function, or a macro. It's all saved on the keyboard, so it keeps working without the app.
-- **The 4 display keys on the numpad (D1–D4)**: an icon (76 included), your own picture or some text, plus an action when you press it: launch an app, open a website, play a sound on any output (volume up to 150 %), a shortcut, a macro, lock, shut down…
+- **Keys & macros**: remap any key, turn it off, give it a shortcut, a media / mouse / profile function, or a macro (type it step by step or record it live). It's all saved on the keyboard, so it keeps working without the app.
+- **The 4 display keys on the numpad (D1–D4)**: an icon (76 included), your own picture or some text, plus an action when you press it: launch an app, open a website, play a sound on any output (volume up to 150 %), a shortcut, a macro, control your media player (Spotify, VLC, browser…) or OBS Studio (scenes, recording, streaming, mute), lock, shut down…
 - **Media dock** (the bit with the round screen): your picture as a screensaver, the clock, system volume, and the PC info screens (CPU, GPU, disk, internet, RAM, keys per minute) finally showing real numbers.
 - **MacroPad & DisplayPad**: the 12 keys of each pad get an action, the MacroPad gets its lighting (built-in effects and per-key colors), and the DisplayPad gets an icon, picture or text on every key. Untested on real hardware for now (I don't own either pad), so feedback is very welcome.
-- **Profiles**: turn the keyboard's profiles on or off (right-click a profile number).
+- **Profiles**: each of the 5 profiles keeps its own lighting, keys and display keys. Name them, copy one onto another, export / import them as a file, and turn them on or off on the keyboard (right-click a profile number).
+- **Software Fn layer**: pick any key as a "Fn" key, and the keys you taught the app get a second action while it's held.
+- **Keystroke heatmap** (opt-in): see which keys you hit the most. Only per-key counts are stored, on your computer.
+- **OpenRGB**: turn on the built-in server and OpenRGB can drive the keyboard like any other device.
+- **Little extras**: lights off while your session is locked, one click to give the MacroPad and the dock menus the keyboard's colors, and the MacroPad's Reactive B / C effects.
 - **Guided setup**: on first launch the app checks what's missing (udev rule, background service, menu entry…) and sorts it out. It also tells you when there's an update to install.
 - **3 languages**: English, French and Japanese.
 
@@ -51,7 +55,7 @@ The "animated by the computer" effects are rendered by the background service at
 
 ![Keys and macros page](docs/en/keys.png)
 
-Click a key, pick what it should do, then **Send this key**. In this example Caps Lock does Ctrl+C and Scroll Lock pauses the music.
+Click a key, pick what it should do, then **Send this key**. In this example Caps Lock does Ctrl+C and Scroll Lock pauses the music. For a macro, **Record live** captures what you type, timing included.
 
 ### Display keys
 
@@ -88,6 +92,8 @@ cargo build --release
 ./target/release/everest
 ```
 
+Packages: an AUR `PKGBUILD` lives in [`packaging/aur`](packaging/aur), `cargo deb` and `cargo generate-rpm` build a .deb / .rpm from `rust/`, and [`packaging/appimage.sh`](packaging/appimage.sh) builds an AppImage.
+
 On first launch, click **Set everything up**. It asks for your admin password once, for the udev rule that lets you talk to the keyboard. After that you'll find **Everest Base Camp** in your app menu, and the service starts on its own when you log in.
 
 ### Command line
@@ -121,7 +127,7 @@ Your settings live in `~/.config/everest-basecamp/`.
 - **Translations**: every string is in [`rust/data/i18n.tsv`](rust/data/i18n.tsv), one line per text (French, English, Japanese). Add a column, or fix anything that reads oddly.
 - **Bugs and ideas**: open an issue and say what you did and what happened.
 
-Not done yet: firmware updates (too risky to do blind) and the Fn layer (the keyboard doesn't expose a command for it).
+Not done yet: firmware updates (too risky to do blind) and a real Fn layer inside the keyboard (it doesn't expose a command for it, hence the software one above).
 
 ## License
 

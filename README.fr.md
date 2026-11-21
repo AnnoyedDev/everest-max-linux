@@ -25,11 +25,15 @@ Tu as un Everest Max, tu es passé sous Linux, et tu t'es rendu compte que Base 
 - **Éclairage** : les 9 effets intégrés au clavier (Vague, Tornade, Respiration, Réactif, Matrix, Yeti…) avec couleurs, vitesse, sens et arc-en-ciel. Aperçu animé en direct avant d'envoyer.
 - **12 effets en plus, animés par le PC** : Aurore, Feu, Pluie, Étoiles, Dégradé, Spectre audio, Pulsation audio, et des jauges CPU / GPU / RAM / internet directement sur les touches.
 - **Dessin touche par touche** : tu peins ton clavier à la souris, en cliquant ou en glissant.
-- **Touches & macros** : remapper n'importe quelle touche, la désactiver, lui mettre un raccourci, une fonction multimédia / souris / profil, ou une macro. Tout est stocké dans le clavier, donc ça marche même sans l'appli.
-- **Les 4 touches écran du pavé (D1–D4)** : une icône (76 fournies), ton image ou du texte, plus une action au clic : lancer un programme, ouvrir un site, jouer un son sur la sortie de ton choix (avec réglage du volume jusqu'à 150 %), raccourci, macro, verrouiller, éteindre…
+- **Touches & macros** : remapper n'importe quelle touche, la désactiver, lui mettre un raccourci, une fonction multimédia / souris / profil, ou une macro (étape par étape ou enregistrée en direct). Tout est stocké dans le clavier, donc ça marche même sans l'appli.
+- **Les 4 touches écran du pavé (D1–D4)** : une icône (76 fournies), ton image ou du texte, plus une action au clic : lancer un programme, ouvrir un site, jouer un son sur la sortie de ton choix (avec réglage du volume jusqu'à 150 %), raccourci, macro, piloter ton lecteur multimédia (Spotify, VLC, navigateur…) ou OBS Studio (scènes, enregistrement, live, micro coupé), verrouiller, éteindre…
 - **Dock média** (le module avec l'écran rond) : ton image en écran de veille, l'heure, le volume du système, et les infos PC (CPU, GPU, disque, internet, RAM, frappes par minute) qui s'affichent enfin.
 - **MacroPad et DisplayPad** : une action sur chacune des 12 touches, l'éclairage du MacroPad (effets intégrés et couleur par touche), et une icône, image ou texte sur chaque touche du DisplayPad. Pas encore testé sur du vrai matériel (je n'ai aucun des deux), donc les retours sont les bienvenus.
-- **Profils** : activer / désactiver les profils du clavier (clic droit sur le numéro).
+- **Profils** : chacun des 5 profils garde son éclairage, ses touches et ses touches écran. Tu peux les renommer, en copier un sur un autre, les exporter / importer en fichier, et les activer / désactiver sur le clavier (clic droit sur le numéro).
+- **Couche Fn logicielle** : choisis n'importe quelle touche comme « Fn », et les touches apprises ont une deuxième action tant que tu la maintiens.
+- **Carte de chaleur des frappes** (à activer) : vois les touches que tu tapes le plus. Seul le nombre d'appuis par touche est gardé, sur ton ordinateur.
+- **OpenRGB** : active le serveur intégré et OpenRGB pilote le clavier comme n'importe quel autre périphérique.
+- **Petits bonus** : lumières éteintes quand la session est verrouillée, un clic pour donner au MacroPad et aux menus du dock les couleurs du clavier, et les effets Réactif B / C du MacroPad.
 - **Installation guidée** : au premier lancement, l'appli vérifie ce qui manque (règle udev, service, raccourci dans le menu…) et s'en occupe. Elle te prévient aussi quand une mise à jour est à installer.
 - **3 langues** : français, anglais, japonais.
 
@@ -51,7 +55,7 @@ Les effets « animés par l'ordinateur » sont calculés par le service en arri�
 
 ![Page touches et macros](docs/fr/keys.png)
 
-Clique une touche, choisis ce qu'elle fait, **Envoyer cette touche**. Dans l'exemple : Verr. Maj fait un Ctrl+C, et Défil met la musique en pause.
+Clique une touche, choisis ce qu'elle fait, **Envoyer cette touche**. Dans l'exemple : Verr. Maj fait un Ctrl+C, et Défil met la musique en pause. Pour une macro, **Enregistrer en direct** capte ce que tu tapes, délais compris.
 
 ### Touches écran
 
@@ -88,6 +92,8 @@ cargo build --release
 ./target/release/everest
 ```
 
+Paquets : un `PKGBUILD` AUR est dans [`packaging/aur`](packaging/aur), `cargo deb` et `cargo generate-rpm` font un .deb / .rpm depuis `rust/`, et [`packaging/appimage.sh`](packaging/appimage.sh) fabrique une AppImage.
+
 Au premier lancement, clique sur **Tout configurer**. Le mot de passe admin est demandé une seule fois (pour la règle udev qui donne accès au clavier). Après ça, l'appli est dans ton menu sous **Everest Base Camp**, et le service démarre tout seul à la connexion.
 
 ### En ligne de commande
@@ -121,7 +127,7 @@ Tes réglages sont dans `~/.config/everest-basecamp/`.
 - **Traductions** : tout est dans [`rust/data/i18n.tsv`](rust/data/i18n.tsv), une ligne par texte (français, anglais, japonais). Ajoute une colonne, ou corrige ce qui sonne faux.
 - **Bugs / idées** : ouvre une issue, avec ce que tu as fait et ce qui s'est passé.
 
-Pas encore fait : la mise à jour du firmware (trop risqué à l'aveugle) et la couche Fn (le clavier n'a pas de commande pour ça).
+Pas encore fait : la mise à jour du firmware (trop risqué à l'aveugle) et une vraie couche Fn dans le clavier (il n'a pas de commande pour ça, d'où la version logicielle plus haut).
 
 ## Licence
 
