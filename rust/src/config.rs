@@ -20,6 +20,7 @@ pub enum Action {
     Multi { actions: Vec<Action> },
     Page { page: usize },
     Media { op: String, #[serde(default)] player: String },
+    Obs { request: String, #[serde(default)] arg: String },
 }
 
 fn full_volume() -> u16 {
@@ -153,6 +154,8 @@ pub struct Config {
     pub macropad: MacroPadCfg,
     pub displaypad: DisplayPadCfg,
     pub layout: String,
+    pub obs_port: u16,
+    pub obs_password: String,
 }
 
 impl Default for Config {
@@ -177,6 +180,8 @@ impl Default for Config {
             macropad: MacroPadCfg::default(),
             displaypad: DisplayPadCfg::default(),
             layout: String::new(),
+            obs_port: 4455,
+            obs_password: String::new(),
         }
     }
 }

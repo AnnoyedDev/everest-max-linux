@@ -1032,10 +1032,11 @@ impl App {
     }
 
     fn action_editor(ui: &mut egui::Ui, icons: &mut Icons, ctx: &egui::Context, a: &mut Action, sinks: &[(String, String)], pages: &[String], depth: usize) {
-        let kinds: [(&str, &str); 13] = [
+        let kinds: [(&str, &str); 14] = [
             ("x", t("Aucune")), ("terminal", t("Lancer un programme")), ("globe", t("Ouvrir un site")), ("folder", t("Ouvrir un dossier")), ("music", t("Jouer un son")),
             ("keyboard", t("Raccourci clavier")), ("power", t("Système")), ("arrow-down", t("Appuyer une touche")), ("arrow-up", t("Relâcher une touche")), ("timer", t("Attendre")), ("layers", t("Plusieurs actions")), ("pad", t("Page du DisplayPad")),
             ("playpause", t("Lecteur multimédia")),
+            ("record", t("OBS Studio")),
         ];
         let cur = match a {
             Action::Aucune => 0,
@@ -1051,6 +1052,7 @@ impl App {
             Action::Multi { .. } => 10,
             Action::Page { .. } => 11,
             Action::Media { .. } => 12,
+            Action::Obs { .. } => 13,
         };
         let mut sel = cur;
         ui.horizontal(|ui| {
@@ -1081,6 +1083,7 @@ impl App {
                 10 => Action::Multi { actions: vec![] },
                 11 => Action::Page { page: 0 },
                 12 => Action::Media { op: "PlayPause".into(), player: String::new() },
+                13 => Action::Obs { request: "SetCurrentProgramScene".into(), arg: String::new() },
                 _ => Action::Aucune,
             };
         }
@@ -1187,6 +1190,24 @@ impl App {
                         }
                     });
                 });
+            }
+            Action::Obs { request, arg } => {
+                let shown = crate::obs::REQUESTS.iter().find(|r| r.0 == request.as_str()).map_or("?", |r| t(r.1));
+                egui::ComboBox::from_id_salt("obs").selected_text(shown).width(280.0).show_ui(ui, |ui| {
+                    for (v, n, _) in crate::obs::REQUESTS {
+                        ui.selectable_value(request, v.to_string(), t(n));
+                    }
+                });
+                match request.as_str() {
+                    "SetCurrentProgramScene" => {
+                        ui.add(egui::TextEdit::singleline(arg).hint_text(t("Nom de la scène")).desired_width(260.0));
+                    }
+                    "ToggleInputMute" => {
+                        ui.add(egui::TextEdit::singleline(arg).hint_text(t("Nom de la source (ex. Mic/Aux)")).desired_width(260.0));
+                    }
+                    _ => {}
+                }
+                ui.label(RichText::new(t("Connexion à régler dans Système → OBS Studio.")).small().color(DIM));
             }
             Action::Aucune => {}
         }
@@ -1831,6 +1852,25 @@ impl App {
                     }
                     None => {
                         ui.label(RichText::new(t("Lecture du clavier…")).color(DIM));
+                    }
+                }
+            });
+            cols[1].add_space(8.0);
+            let img = self.ic(ctx, "record");
+            theme::card(&mut cols[1], img, t("OBS Studio"), |ui| {
+                ui.label(RichText::new(t("Dans OBS : Outils → Paramètres du serveur WebSocket, active le serveur et copie le mot de passe ici.")).small().color(DIM));
+                egui::Grid::new("obs").num_columns(2).spacing(Vec2::new(12.0, 6.0)).show(ui, |ui| {
+                    ui.label(RichText::new(t("Port")).color(DIM));
+                    ui.add(egui::DragValue::new(&mut self.cfg.obs_port).range(1..=65535));
+                    ui.end_row();
+                    ui.label(RichText::new(t("Mot de passe")).color(DIM));
+                    ui.add(egui::TextEdit::singleline(&mut self.cfg.obs_password).password(true).desired_width(200.0));
+                    ui.end_row();
+                });
+                if theme::icon_button(ui, &mut self.icons, "check", t("Tester la connexion"), false).clicked() {
+                    match crate::obs::scenes(self.cfg.obs_port, &self.cfg.obs_password) {
+                        Ok(s) => self.say(tf!("OBS connecté — scènes : {}", s.join(", ")), true),
+                        Err(e) => self.say(e, false),
                     }
                 }
             });

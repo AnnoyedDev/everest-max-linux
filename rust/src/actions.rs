@@ -83,6 +83,10 @@ impl Runner {
             Action::Multi { actions } => actions.iter().try_for_each(|x| self.run(x)),
             Action::Page { .. } => Ok(()),
             Action::Media { op, player } => media(op, player),
+            Action::Obs { request, arg } => {
+                let cfg = crate::config::Config::load();
+                crate::obs::run(cfg.obs_port, &cfg.obs_password, request, arg)
+            }
         }
     }
 }

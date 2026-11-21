@@ -80,7 +80,7 @@ mod tests {
 
     #[test]
     fn every_source_key_is_translated() {
-        let sources = [include_str!("gui.rs"), include_str!("setup.rs"), include_str!("device.rs"), include_str!("apply.rs"), include_str!("uinput.rs"), include_str!("images.rs"), include_str!("fx.rs"), include_str!("protocol.rs"), include_str!("icons.rs"), include_str!("pad.rs")];
+        let sources = [include_str!("gui.rs"), include_str!("setup.rs"), include_str!("device.rs"), include_str!("apply.rs"), include_str!("uinput.rs"), include_str!("images.rs"), include_str!("fx.rs"), include_str!("protocol.rs"), include_str!("icons.rs"), include_str!("pad.rs"), include_str!("obs.rs"), include_str!("actions.rs")];
         let re_keys = |src: &'static str| -> Vec<&'static str> {
             let mut keys = vec![];
             for marker in ["t(\"", "tf!(\""] {
@@ -106,7 +106,8 @@ mod tests {
         }
         let consts = crate::protocol::EFFECTS.iter().map(|e| e.0)
             .chain(crate::fx::SOFT.iter().map(|e| e.0))
-            .chain(crate::icons::LIBRARY.iter().map(|e| e.1));
+            .chain(crate::icons::LIBRARY.iter().map(|e| e.1))
+            .chain(crate::obs::REQUESTS.iter().map(|e| e.1));
         for k in consts {
             assert!(table().contains_key(k), "missing translation: {k}");
         }

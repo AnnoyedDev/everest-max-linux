@@ -395,3 +395,22 @@ Lecteur multimédia	Media player	メディアプレーヤー
 Lecteur	Player	プレーヤー
 Le premier ouvert	First one open	最初に開いたもの
 aucun lecteur multimédia ouvert	no media player is open	メディアプレーヤーが開いていません
+OBS Studio	OBS Studio	OBS Studio
+Changer de scène	Switch scene	シーンを切り替える
+Lancer / arrêter l'enregistrement	Start / stop recording	録画の開始／停止
+Mettre l'enregistrement en pause	Pause the recording	録画を一時停止
+Lancer / arrêter le live	Start / stop streaming	配信の開始／停止
+Couper / rétablir une source audio	Mute / unmute an audio source	音声ソースのミュート／解除
+Lancer / arrêter le replay	Start / stop the replay buffer	リプレイバッファの開始／停止
+Sauvegarder le replay	Save the replay	リプレイを保存
+Nom de la scène	Scene name	シーン名
+Nom de la source (ex. Mic/Aux)	Source name (e.g. Mic/Aux)	ソース名（例：Mic/Aux）
+Connexion à régler dans Système → OBS Studio.	Set up the connection in System → OBS Studio.	接続の設定は「システム」→「OBS Studio」でできます。
+Dans OBS : Outils → Paramètres du serveur WebSocket, active le serveur et copie le mot de passe ici.	In OBS: Tools → WebSocket Server Settings, turn the server on and copy the password here.	OBS で「ツール」→「WebSocket サーバー設定」を開いて、サーバーをオンにしたら、パスワードをここにコピーしてくださいね。
+Port	Port	ポート
+Mot de passe	Password	パスワード
+Tester la connexion	Test the connection	接続をテスト
+OBS connecté — scènes : {}	OBS connected — scenes: {}	OBS に接続しました。シーン：{}
+OBS injoignable sur le port {} ({})	Can't reach OBS on port {} ({})	ポート {} で OBS につながりません（{}）
+mot de passe OBS refusé	OBS rejected the password	OBS にパスワードを拒否されました
+OBS a fermé la connexion ({})	OBS closed the connection ({})	OBS が接続を閉じました（{}）
