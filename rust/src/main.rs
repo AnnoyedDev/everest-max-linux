@@ -13,6 +13,7 @@ mod images;
 mod input;
 mod keys;
 mod obs;
+mod openrgb;
 mod pad;
 mod protocol;
 mod setup;

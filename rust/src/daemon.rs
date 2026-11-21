@@ -54,6 +54,7 @@ pub fn run() {
     });
 
     std::thread::spawn(crate::input::heatmap);
+    std::thread::spawn(crate::openrgb::serve);
     for k in [crate::pad::Kind::MacroPad, crate::pad::Kind::DisplayPad] {
         let tx = tx.clone();
         std::thread::spawn(move || crate::pad::listen(k, tx));
@@ -85,8 +86,15 @@ pub fn run() {
         let mut soft_active = false;
         let mut failures = 0;
         let mut locked = false;
+        let mut was_ext = false;
         loop {
-            let soft = !locked && fx::soft_index(cfg.effect.effect).is_some();
+            let ext = if locked { None } else { crate::openrgb::frame() };
+            if ext.is_none() && was_ext {
+                let _ = apply::lighting(&mut dev, &cfg, false);
+                soft_active = false;
+            }
+            was_ext = ext.is_some();
+            let soft = !locked && (ext.is_some() || fx::soft_index(cfg.effect.effect).is_some());
             let wait = if soft { next_frame.saturating_duration_since(Instant::now()).min(Duration::from_millis(250)) } else { Duration::from_millis(250) };
             while let Some(r) = dev.read(wait) {
                 if r[0] == 0x01 {
@@ -116,7 +124,7 @@ pub fn run() {
             }
             if soft {
                 if !soft_active {
-                    let _ = dev.transact(&p::switch_profile(cfg.profile, p::slot(cfg.effect.effect)));
+                    let _ = dev.transact(&p::switch_profile(cfg.profile, p::slot(if ext.is_some() { p::CUSTOM } else { cfg.effect.effect })));
                     soft_active = true;
                 }
                 if fx::uses_audio(cfg.effect.effect) && ((audio.is_none() && audio_try.elapsed() > Duration::from_secs(3)) || audio_key != cfg.audio_sources) {
@@ -129,7 +137,7 @@ pub fn run() {
                     next_frame = Instant::now() + FRAME;
                     let (bands, level) = audio.as_ref().map(|a| a.get()).unwrap_or_default();
                     let inputs = fx::Inputs { bands, level, cpu: loads[0], gpu: loads[1], ram: loads[2], net: loads[3] };
-                    let frame = fx::frame(cfg.effect.effect, &cfg.effect, start.elapsed().as_secs_f32(), &inputs);
+                    let frame = ext.unwrap_or_else(|| fx::frame(cfg.effect.effect, &cfg.effect, start.elapsed().as_secs_f32(), &inputs));
                     if dev.send_all(&p::custom_static(&frame)).is_err() {
                         failures += 1;
                         if failures > 20 {

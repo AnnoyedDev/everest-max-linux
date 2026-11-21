@@ -1974,6 +1974,10 @@ impl App {
                     }
                 });
                 theme::toggle(ui, &mut self.cfg.dark_when_locked, t("Éteindre l'éclairage quand la session est verrouillée"));
+                theme::toggle(ui, &mut self.cfg.openrgb, t("Serveur OpenRGB"));
+                if self.cfg.openrgb {
+                    ui.label(RichText::new(tf!("Dans OpenRGB : onglet Client, ajoute 127.0.0.1 port {}. Tant qu'OpenRGB est connecté, il pilote les couleurs du clavier.", crate::openrgb::PORT)).small().color(DIM));
+                }
             });
             cols[1].add_space(8.0);
             let img = self.ic(ctx, "profile");

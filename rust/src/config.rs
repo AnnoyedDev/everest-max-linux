@@ -173,6 +173,7 @@ pub struct Config {
     pub dark_when_locked: bool,
     pub sync_devices: bool,
     pub heatmap: bool,
+    pub openrgb: bool,
 }
 
 impl Default for Config {
@@ -204,6 +205,7 @@ impl Default for Config {
             dark_when_locked: false,
             sync_devices: false,
             heatmap: false,
+            openrgb: false,
         }
     }
 }
