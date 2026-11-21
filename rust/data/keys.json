@@ -456,7 +456,7 @@
 },
 {
 "name": "]",
-"matrix": 111,
+"matrix": 110,
 "dll": 28
 },
 {
@@ -628,5 +628,15 @@
 "name": "RCtrl",
 "matrix": 95,
 "dll": 64
+},
+{
+"name": "ISO #",
+"matrix": 111,
+"dll": 0
+},
+{
+"name": "ISO <",
+"matrix": 13,
+"dll": 0
 }
 ]

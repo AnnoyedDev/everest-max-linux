@@ -50,18 +50,81 @@ pub const ROWS: [&[Cell]; 6] = [
     &[("Ctrl", "LCtrl", 1.25), ("Win", "LWin", 1.25), ("Alt", "Alt", 1.25), ("Espace", "Space", 6.25), ("AltGr", "Alt Gr", 1.25), ("Win", "RWin", 1.25), ("Fn", "Fn", 1.25), ("Ctrl", "RCtrl", 1.25), G, ("←", "⏴", 1.0), ("↓", "⏷", 1.0), ("→", "⏵", 1.0), G, ("0", "Num 0", 2.0), (".", "Num .", 1.0)],
 ];
 
+pub const LAYOUTS: [(&str, &str); 8] = [
+    ("us", "English (US)"),
+    ("uk", "English (UK)"),
+    ("fr", "Français (AZERTY)"),
+    ("de", "Deutsch (QWERTZ)"),
+    ("es", "Español"),
+    ("it", "Italiano"),
+    ("nordic", "Nordic"),
+    ("pt", "Português"),
+];
+
+const ALPHA: [&str; 48] = [
+    "`", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "-", "=",
+    "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "[", "]",
+    "A", "S", "D", "F", "G", "H", "J", "K", "L", ";", "'", "ISO #",
+    "ISO <", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "/",
+];
+
+fn labels(layout: &str) -> &'static str {
+    match layout {
+        "uk" => "` 1 2 3 4 5 6 7 8 9 0 - = Q W E R T Y U I O P [ ] A S D F G H J K L ; ' # \\ Z X C V B N M , . /",
+        "fr" => "² & é \" ' ( - è _ ç à ) = A Z E R T Y U I O P ^ $ Q S D F G H J K L M ù * < W X C V B N , ; : !",
+        "de" => "^ 1 2 3 4 5 6 7 8 9 0 ß ´ Q W E R T Z U I O P Ü + A S D F G H J K L Ö Ä # < Y X C V B N M , . -",
+        "es" => "º 1 2 3 4 5 6 7 8 9 0 ' ¡ Q W E R T Y U I O P ` + A S D F G H J K L Ñ ´ Ç < Z X C V B N M , . -",
+        "it" => "\\ 1 2 3 4 5 6 7 8 9 0 ' ì Q W E R T Y U I O P è + A S D F G H J K L ò à ù < Z X C V B N M , . -",
+        "nordic" => "§ 1 2 3 4 5 6 7 8 9 0 + ´ Q W E R T Y U I O P Å ¨ A S D F G H J K L Ö Ä ' < Z X C V B N M , . -",
+        "pt" => "\\ 1 2 3 4 5 6 7 8 9 0 ' « Q W E R T Y U I O P + ´ A S D F G H J K L Ç º ~ < Z X C V B N M , . -",
+        _ => "",
+    }
+}
+
+pub fn rows(layout: &str) -> Vec<Vec<Cell>> {
+    let mut rows: Vec<Vec<Cell>> = ROWS.iter().map(|r| r.to_vec()).collect();
+    let text = labels(layout);
+    if text.is_empty() {
+        return rows;
+    }
+    let iso = |r: &mut Vec<Cell>, at: &str, cell: Cell, replace: bool| {
+        let i = r.iter().position(|c| c.1 == at).unwrap();
+        if replace { r[i] = cell } else { r.insert(i, cell) }
+    };
+    iso(&mut rows[2], "\\", ("Entrée", "Enter", 1.5), true);
+    iso(&mut rows[3], "Enter", ("", "ISO #", 1.0), false);
+    iso(&mut rows[3], "Enter", ("", "Enter", 1.25), true);
+    iso(&mut rows[4], "LShift", ("Maj", "LShift", 1.25), true);
+    iso(&mut rows[4], "Z", ("", "ISO <", 1.0), false);
+    let map: Vec<(&str, &str)> = ALPHA.iter().copied().zip(text.split(' ')).collect();
+    for row in rows.iter_mut() {
+        for c in row.iter_mut() {
+            if let Some(&(_, l)) = map.iter().find(|m| m.0 == c.1) {
+                c.0 = l;
+            }
+        }
+    }
+    rows
+}
+
+pub fn default_layout(lang: &str) -> &'static str {
+    if lang == "fr" { "fr" } else { "us" }
+}
+
 pub fn positions() -> &'static [(f32, f32); 126] {
     static P: OnceLock<[(f32, f32); 126]> = OnceLock::new();
     P.get_or_init(|| {
         let width = ROWS.iter().map(|r| r.iter().map(|c| c.2).sum::<f32>()).fold(0.0, f32::max);
         let mut p = [(0.5, 0.0); 126];
-        for (r, row) in ROWS.iter().enumerate() {
-            let mut x = 0.0;
-            for &(_, name, w) in row.iter() {
-                if let Some(k) = by_name(name).filter(|k| (k.matrix as usize) < 126) {
-                    p[k.matrix as usize] = ((x + w / 2.0) / width, r as f32 / 5.0);
+        for layout in ["fr", "us"] {
+            for (r, row) in rows(layout).iter().enumerate() {
+                let mut x = 0.0;
+                for &(_, name, w) in row.iter() {
+                    if let Some(k) = by_name(name).filter(|k| (k.matrix as usize) < 126) {
+                        p[k.matrix as usize] = ((x + w / 2.0) / width, r as f32 / 5.0);
+                    }
+                    x += w;
                 }
-                x += w;
             }
         }
         p
@@ -72,10 +135,17 @@ pub fn positions() -> &'static [(f32, f32); 126] {
 mod tests {
     #[test]
     fn layout_names_exist() {
-        for row in super::ROWS {
-            for (_, name, _) in row.iter() {
-                assert!(name.is_empty() || super::by_name(name).is_some(), "{name}");
+        for (layout, _) in super::LAYOUTS {
+            assert!(layout == "us" || super::labels(layout).split(' ').count() == super::ALPHA.len(), "{layout}");
+            let rows = super::rows(layout);
+            for row in &rows {
+                for (_, name, _) in row.iter() {
+                    assert!(name.is_empty() || super::by_name(name).is_some(), "{name}");
+                }
             }
+            let width = |r: &Vec<super::Cell>| r.iter().map(|c| c.2).sum::<f32>();
+            let us = super::rows("us");
+            assert!(rows.iter().zip(&us).all(|(a, b)| (width(a) - width(b)).abs() < 0.01), "{layout}");
         }
         assert!(super::functions().iter().any(|f| f.value == 183));
     }
