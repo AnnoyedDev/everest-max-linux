@@ -11,18 +11,37 @@ pub type Result<T> = std::result::Result<T, String>;
 
 const REPLY_TIMEOUT: Duration = Duration::from_millis(600);
 
-pub fn find_hidraw() -> Result<String> {
-    let mut devs: Vec<_> = std::fs::read_dir("/sys/class/hidraw").map_err(|e| e.to_string())?.flatten().collect();
+pub struct Node {
+    pub dev: String,
+    pub iface: u8,
+    pub usb: std::path::PathBuf,
+}
+
+pub fn nodes(pid: u16, vendor_only: bool) -> Vec<Node> {
+    let mut devs: Vec<_> = std::fs::read_dir("/sys/class/hidraw").map(|r| r.flatten().collect()).unwrap_or_default();
     devs.sort_by_key(|d| d.file_name());
-    for d in devs {
+    let id = format!("HID_ID=0003:00003282:{:08X}", pid);
+    devs.into_iter().filter_map(|d| {
         let base = d.path().join("device");
-        let uevent = std::fs::read_to_string(base.join("uevent")).unwrap_or_default();
+        let uevent = std::fs::read_to_string(base.join("uevent")).ok()?;
         let desc = std::fs::read(base.join("report_descriptor")).unwrap_or_default();
-        if uevent.contains("HID_ID=0003:00003282:00000001") && desc.starts_with(&[0x06, 0x00, 0xFF]) {
-            return Ok(format!("/dev/{}", d.file_name().to_string_lossy()));
+        if !uevent.contains(&id) || (vendor_only && !desc.starts_with(&[0x06, 0x00, 0xFF])) {
+            return None;
         }
-    }
-    Err(t("Everest Max introuvable (branché ? règle udev installée ?)").into())
+        let intf = std::fs::canonicalize(&base).ok()?.parent()?.to_path_buf();
+        let iface = u8::from_str_radix(std::fs::read_to_string(intf.join("bInterfaceNumber")).ok()?.trim(), 16).ok()?;
+        Some(Node { dev: format!("/dev/{}", d.file_name().to_string_lossy()), iface, usb: intf.parent()?.to_path_buf() })
+    }).collect()
+}
+
+pub fn find(pid: u16) -> Option<Node> {
+    let mut v = nodes(pid, true);
+    let i = v.iter().position(|n| n.iface == 3).unwrap_or(0);
+    (!v.is_empty()).then(|| v.swap_remove(i))
+}
+
+pub fn find_hidraw() -> Result<String> {
+    find(1).map(|n| n.dev).ok_or(t("Everest Max introuvable (branché ? règle udev installée ?)").into())
 }
 
 pub struct Device {
@@ -32,8 +51,11 @@ pub struct Device {
 
 impl Device {
     pub fn open() -> Result<Device> {
-        let path = find_hidraw()?;
-        let f = OpenOptions::new().read(true).write(true).custom_flags(libc::O_NONBLOCK).open(&path)
+        Device::open_path(&find_hidraw()?)
+    }
+
+    pub fn open_path(path: &str) -> Result<Device> {
+        let f = OpenOptions::new().read(true).write(true).custom_flags(libc::O_NONBLOCK).open(path)
             .map_err(|e| tf!("{}: {} — installez 70-mountain-everest.rules", path, e))?;
         Ok(Device { f, pending: VecDeque::new() })
     }
@@ -57,13 +79,34 @@ impl Device {
         }
     }
 
-    pub fn transact(&mut self, report: &Report) -> Result<Report> {
+    pub fn send(&mut self, report: &Report) -> Result<()> {
         while let Some(r) = self.read_raw(Duration::ZERO) {
             self.keep(r);
         }
         let mut buf = [0u8; 65];
         buf[1..].copy_from_slice(report);
-        self.f.write_all(&buf).map_err(|e| tf!("écriture: {}", e))?;
+        self.f.write_all(&buf).map_err(|e| tf!("écriture: {}", e))
+    }
+
+    pub fn wait_for(&mut self, timeout: Duration, want: impl Fn(&Report) -> bool) -> Option<Report> {
+        let end = Instant::now() + timeout;
+        while let Some(left) = end.checked_duration_since(Instant::now()) {
+            let r = self.read_raw(left)?;
+            if want(&r) {
+                return Some(r);
+            }
+            self.keep(r);
+        }
+        None
+    }
+
+    pub fn command_loose(&mut self, report: &Report) -> Result<Option<Report>> {
+        self.send(report)?;
+        Ok(self.wait_for(REPLY_TIMEOUT, |r| r[0] != 0x01))
+    }
+
+    pub fn transact(&mut self, report: &Report) -> Result<Report> {
+        self.send(report)?;
         let timeout = match (report[0], report[1]) {
             (0x14, 0x00) => Duration::from_millis(950),
             (0x13, 0x55) => Duration::from_millis(1300),

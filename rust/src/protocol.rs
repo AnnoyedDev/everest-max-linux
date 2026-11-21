@@ -250,6 +250,28 @@ pub fn pic_dims(dev: u8, idx: u8) -> Option<(u32, u32)> {
     }
 }
 
+pub const PAD_KEYS: usize = 12;
+
+pub fn pad_init() -> Report {
+    pkt(&[0x11, 0x80, 0, 0, 1], &[])
+}
+
+pub fn pad_brightness(percent: u8) -> Report {
+    pkt(&[0x12, 0x03, 0, 0, percent.min(100)], &[])
+}
+
+pub fn pad_image(key: u8) -> Report {
+    pkt(&[0x21, 0, 0, 0, key, 0x3D, 0, 0, 0x65, 0x65], &[])
+}
+
+pub fn pad_custom(brightness: u8, colors: &[[u8; 3]; PAD_KEYS]) -> [Report; 2] {
+    let mut on = [0xFF; 64];
+    on[..4].copy_from_slice(&[0x14, 0x2C, 10, 0]);
+    on[5] = brightness.min(100);
+    let flat: Vec<u8> = colors.iter().flatten().copied().collect();
+    [on, pkt(&[0x14, 0x2C, 0, 1, 0, 0x4B, 0], &flat)]
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -301,5 +323,18 @@ mod tests {
         assert_eq!(&pic_start(10368, 0x1234, 2, 1, 3)[..13], &[0xAA, 0x55, 0x10, 0x80, 0x28, 0, 0x34, 0x12, 0, 0, 2, 1, 3]);
         assert_eq!(checksum(&[0xFF, 0xFF, 2]), 0x200);
         assert_eq!(pic_dims(1, 1), Some((72, 72)));
+    }
+
+    #[test]
+    fn pad_packets() {
+        assert_eq!(&pad_init()[..6], &[0x11, 0x80, 0, 0, 1, 0]);
+        assert_eq!(&pad_brightness(75)[..5], &[0x12, 0x03, 0, 0, 75]);
+        assert_eq!(&pad_image(4)[..11], &[0x21, 0, 0, 0, 4, 0x3D, 0, 0, 0x65, 0x65, 0]);
+        let mut c = [[0u8; 3]; PAD_KEYS];
+        c[11] = [1, 2, 3];
+        let [on, colors] = pad_custom(80, &c);
+        assert_eq!(&on[..7], &[0x14, 0x2C, 10, 0, 0xFF, 80, 0xFF]);
+        assert_eq!(&colors[..7], &[0x14, 0x2C, 0, 1, 0, 0x4B, 0]);
+        assert_eq!(&colors[7 + 33..7 + 36], &[1, 2, 3]);
     }
 }
