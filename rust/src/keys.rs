@@ -81,6 +81,10 @@ fn labels(layout: &str) -> &'static str {
     }
 }
 
+pub fn label(layout: &str, name: &str) -> String {
+    ALPHA.iter().position(|a| *a == name).and_then(|i| labels(layout).split_whitespace().nth(i)).unwrap_or(name).to_string()
+}
+
 pub fn rows(layout: &str) -> Vec<Vec<Cell>> {
     let mut rows: Vec<Vec<Cell>> = ROWS.iter().map(|r| r.to_vec()).collect();
     let text = labels(layout);
@@ -105,6 +109,15 @@ pub fn rows(layout: &str) -> Vec<Vec<Cell>> {
         }
     }
     rows
+}
+
+pub fn physical(layout: &str, key: &str) -> String {
+    let k = key.trim().to_lowercase();
+    if k.chars().count() != 1 {
+        return key.trim().to_string();
+    }
+    labels(layout).split_whitespace().position(|l| l.to_lowercase() == k)
+        .map(|i| ALPHA[i]).filter(|n| n.len() == 1).map_or(k, |n| n.to_lowercase())
 }
 
 pub fn default_layout(lang: &str) -> &'static str {
@@ -133,6 +146,19 @@ pub fn positions() -> &'static [(f32, f32); 126] {
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn labels_follow_the_layout() {
+        assert_eq!(super::label("fr", "Q"), "A");
+        assert_eq!(super::label("de", "Y"), "Z");
+        assert_eq!(super::label("us", "Q"), "Q");
+        assert_eq!(super::label("fr", "Num 8"), "Num 8");
+        assert_eq!(super::physical("fr", "a"), "q");
+        assert_eq!(super::physical("fr", "M"), ";");
+        assert_eq!(super::physical("de", "z"), "y");
+        assert_eq!(super::physical("us", "a"), "a");
+        assert_eq!(super::physical("fr", "enter"), "enter");
+    }
+
     #[test]
     fn layout_names_exist() {
         for (layout, _) in super::LAYOUTS {

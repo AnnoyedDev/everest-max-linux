@@ -909,10 +909,11 @@ impl App {
             }
         });
         ui.add_space(6.0);
+        let layout = self.layout();
         let key_combo = |ui: &mut egui::Ui, id: &str, v: &mut String| {
-            egui::ComboBox::from_id_salt(id).selected_text(v.as_str()).height(420.0).show_ui(ui, |ui| {
+            egui::ComboBox::from_id_salt(id).selected_text(keys::label(&layout, v)).height(420.0).show_ui(ui, |ui| {
                 for k in keys::keys() {
-                    ui.selectable_value(v, k.name.clone(), &k.name);
+                    ui.selectable_value(v, k.name.clone(), keys::label(&layout, &k.name));
                 }
             });
         };
@@ -987,7 +988,7 @@ impl App {
                                             _ => t("Molette ↓").into(),
                                         }
                                     } else {
-                                        keys::keys().iter().find(|k| k.dll == ev.key).map(|k| k.name.clone()).unwrap_or_default()
+                                        keys::keys().iter().find(|k| k.dll == ev.key).map(|k| keys::label(&layout, &k.name)).unwrap_or_default()
                                     };
                                     egui::ComboBox::from_id_salt("k").selected_text(shown).width(150.0).height(420.0).show_ui(ui, |ui| {
                                         for (k, n) in [(1u8, t("Clic gauche")), (2, t("Clic droit")), (3, t("Clic milieu")), (49, t("Molette ↑")), (48, t("Molette ↓"))] {
@@ -997,7 +998,7 @@ impl App {
                                         }
                                         ui.separator();
                                         for k in keys::keys() {
-                                            if ui.selectable_label(ev.page == 0 && ev.key == k.dll, &k.name).clicked() {
+                                            if ui.selectable_label(ev.page == 0 && ev.key == k.dll, keys::label(&layout, &k.name)).clicked() {
                                                 *ev = MacroEvent { key: k.dll, page: 0, action: if ev.action == 3 { 2 } else { ev.action }, delay: ev.delay };
                                             }
                                         }

@@ -244,6 +244,13 @@ impl Config {
         std::fs::rename(tmp, p).map_err(|e| e.to_string())
     }
 
+    pub fn layout_code(&self) -> String {
+        if !self.layout.is_empty() {
+            return self.layout.clone();
+        }
+        crate::keys::default_layout(if self.lang.is_empty() { crate::i18n::detect() } else { &self.lang }).to_string()
+    }
+
     pub fn net(&self) -> crate::stats::NetCfg<'_> {
         crate::stats::NetCfg { iface: &self.net_iface, dir: self.net_dir, max_mbps: self.net_max_mbps }
     }

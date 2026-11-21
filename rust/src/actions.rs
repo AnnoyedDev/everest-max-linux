@@ -54,7 +54,11 @@ impl Runner {
                 let vol = format!("--volume={}", *volume.min(&150) as u32 * 65536 / 100);
                 if sink.is_empty() { spawn("paplay", &[&vol, file]) } else { spawn("paplay", &[&vol, "--device", sink, file]) }
             }
-            Action::Raccourci { keys } => self.vk()?.chord(keys),
+            Action::Raccourci { keys } => {
+                let layout = crate::config::Config::load().layout_code();
+                let combo: Vec<String> = keys.split('+').map(|k| crate::keys::physical(&layout, k)).collect();
+                self.vk()?.chord(&combo.join("+"))
+            }
             Action::ToucheBas { key } | Action::ToucheHaut { key } => {
                 let down = matches!(a, Action::ToucheBas { .. });
                 match key.as_str() {
@@ -62,7 +66,8 @@ impl Runner {
                     "wheeldown" if down => self.vk()?.wheel(-1),
                     "wheelup" | "wheeldown" => {}
                     k => {
-                        let c = key_code(k).ok_or(format!("touche inconnue : {k}"))?;
+                        let k = crate::keys::physical(&crate::config::Config::load().layout_code(), k);
+                        let c = key_code(&k).ok_or(format!("touche inconnue : {k}"))?;
                         self.vk()?.key(c, down)
                     }
                 }
