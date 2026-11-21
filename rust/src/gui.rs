@@ -323,6 +323,10 @@ fn keyboard(ui: &mut egui::Ui, layout: &str, fill: &dyn Fn(&str, f32, f32) -> Co
     out
 }
 
+fn close_button(ui: &mut egui::Ui, icons: &mut Icons, ctx: &egui::Context) -> bool {
+    ui.add(egui::Button::image(icons.image(ctx, "x", 12.0, DIM)).small()).on_hover_text(t("Supprimer")).clicked()
+}
+
 fn segmented(ui: &mut egui::Ui, icons: &mut Icons, items: &[(&str, &str)], current: usize) -> Option<usize> {
     let mut out = None;
     ui.horizontal(|ui| {
@@ -975,7 +979,7 @@ impl App {
                     if events.is_empty() {
                         ui.label(RichText::new(t("Aucun événement — ajoute des touches ci-dessous.")).color(DIM));
                     }
-                    egui::ScrollArea::vertical().max_height(220.0).show(ui, |ui| {
+                    egui::ScrollArea::vertical().max_height(460.0).show(ui, |ui| {
                         for (i, ev) in events.iter_mut().enumerate() {
                             ui.push_id(i, |ui| {
                                 ui.horizontal(|ui| {
@@ -1011,7 +1015,7 @@ impl App {
                                     if ui.small_button("↑").clicked() && i > 0 {
                                         swap = Some(i);
                                     }
-                                    if ui.small_button("✖").clicked() {
+                                    if close_button(ui, icons, ctx) {
                                         remove = Some(i);
                                     }
                                 });
@@ -1214,7 +1218,7 @@ impl App {
                 1 => Action::Commande { cmd: String::new() },
                 2 => Action::Url { url: "https://".into() },
                 3 => Action::Dossier { path: String::new() },
-                4 => Action::Son { file: String::new(), sink: String::new(), volume: 100 },
+                4 => Action::Son { file: String::new(), sink: String::new(), volume: 85 },
                 5 => Action::Raccourci { keys: "ctrl+c".into() },
                 6 => Action::Systeme { op: PowerOp::Verrouiller },
                 7 => Action::ToucheBas { key: "a".into() },
@@ -1291,7 +1295,7 @@ impl App {
                             ui.horizontal(|ui| {
                                 ui.label(RichText::new(format!("{:02}", i + 1)).font(theme::title_font(12.0)).color(ACCENT));
                                 ui.vertical(|ui| Self::action_editor(ui, icons, ctx, x, sinks, pages, depth + 1));
-                                if ui.small_button("✖").clicked() {
+                                if close_button(ui, icons, ctx) {
                                     remove = Some(i);
                                 }
                             });
@@ -2120,7 +2124,7 @@ impl App {
                     match self.cfg.fn_key {
                         Some((b, n)) => {
                             ui.label(tf!("Touche {}.{}", b, n));
-                            if ui.small_button("✖").clicked() {
+                            if close_button(ui, &mut self.icons, ctx) {
                                 self.cfg.fn_key = None;
                             }
                         }
@@ -2136,7 +2140,7 @@ impl App {
                         egui::Frame::default().stroke(Stroke::new(1.0_f32, LINE)).corner_radius(4).inner_margin(8).show(ui, |ui| {
                             ui.horizontal(|ui| {
                                 ui.add(egui::TextEdit::singleline(&mut hk.name).desired_width(160.0));
-                                if ui.small_button("✖").clicked() {
+                                if close_button(ui, &mut self.icons, ctx) {
                                     remove = Some(i);
                                 }
                             });

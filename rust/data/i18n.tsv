@@ -444,3 +444,4 @@ Enregistrer en direct	Record live	リアルタイムで記録
 L'enregistrement capte les touches du clavier avec leurs délais, pas la souris.	Recording picks up keyboard keys with their timing, not the mouse.	記録されるのはキーボードのキーとそのタイミングだけで、マウスは含まれません。
 Serveur OpenRGB	OpenRGB server	OpenRGB サーバー
 Dans OpenRGB : onglet Client, ajoute 127.0.0.1 port {}. Tant qu'OpenRGB est connecté, il pilote les couleurs du clavier.	In OpenRGB: Client tab, add 127.0.0.1 port {}. While OpenRGB is connected, it drives the keyboard colors.	OpenRGB の「Client」タブで 127.0.0.1、ポート {} を追加してください。OpenRGB が接続しているあいだは、キーボードの色を OpenRGB が操作します。
+Supprimer	Remove	削除
