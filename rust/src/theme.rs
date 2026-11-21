@@ -153,6 +153,10 @@ impl Icons {
 }
 
 pub fn card<R>(ui: &mut egui::Ui, img: egui::Image<'static>, title: &str, add: impl FnOnce(&mut egui::Ui) -> R) -> R {
+    card_with(ui, img, title, |_| {}, add)
+}
+
+pub fn card_with<R>(ui: &mut egui::Ui, img: egui::Image<'static>, title: &str, extra: impl FnOnce(&mut egui::Ui), add: impl FnOnce(&mut egui::Ui) -> R) -> R {
     let out = egui::Frame::default()
         .fill(CARD)
         .stroke(Stroke::new(1.0_f32, LINE))
@@ -163,6 +167,7 @@ pub fn card<R>(ui: &mut egui::Ui, img: egui::Image<'static>, title: &str, add: i
             ui.horizontal(|ui| {
                 ui.add(img);
                 ui.label(egui::RichText::new(title.to_uppercase()).font(title_font(13.0)).color(ACCENT));
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), extra);
             });
             let r = ui.available_rect_before_wrap();
             ui.painter().line_segment([Pos2::new(r.left(), r.top()), Pos2::new(r.right(), r.top())], Stroke::new(1.0_f32, LINE));

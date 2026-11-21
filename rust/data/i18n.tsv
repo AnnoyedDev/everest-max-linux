@@ -388,3 +388,4 @@ Le service tient le DisplayPad à jour tout seul : les changements s'affichent e
 Disposition du clavier	Keyboard layout	キーボード配列
 Change seulement l'affichage des touches dans l'appli, pas le clavier lui-même.	Only changes how the keys are shown in the app, not the keyboard itself.	アプリでのキーの表示が変わるだけで、キーボード本体の設定は変わりません。
 Page {}	Page {}	ページ {}
+Disposition	Layout	配列

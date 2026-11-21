@@ -427,6 +427,16 @@ impl App {
         if self.cfg.layout.is_empty() { keys::default_layout(crate::i18n::current()).to_string() } else { self.cfg.layout.clone() }
     }
 
+    fn layout_menu(ui: &mut egui::Ui, layout: &mut String) {
+        let shown = keys::LAYOUTS.iter().find(|l| l.0 == layout.as_str()).map_or(layout.as_str(), |l| l.1).to_string();
+        egui::ComboBox::from_id_salt("quick-layout").selected_text(shown).width(170.0).show_ui(ui, |ui| {
+            for (code, name) in keys::LAYOUTS {
+                ui.selectable_value(layout, code.to_string(), name);
+            }
+        });
+        ui.label(RichText::new(t("Disposition")).color(DIM));
+    }
+
     fn ic(&mut self, ctx: &egui::Context, name: &str) -> egui::Image<'static> {
         self.icons.image(ctx, name, 16.0, ACCENT)
     }
@@ -573,7 +583,8 @@ impl App {
         let layout = self.layout();
         let img = self.ic(ctx, if custom { "brush" } else { "eye" });
         let title = if custom { t("Dessin — clique ou glisse sur les touches") } else { t("Aperçu en direct") };
-        theme::card(ui, img, title, |ui| {
+        let mut quick = layout.clone();
+        theme::card_with(ui, img, title, |ui| Self::layout_menu(ui, &mut quick), |ui| {
             let e = self.cfg.effect.clone();
             let c = self.cfg.custom.clone();
             let frame = soft.then(|| fx::frame(eff, &e, now, &fx::demo_inputs(now)));
@@ -623,6 +634,9 @@ impl App {
                 });
             }
         });
+        if quick != layout {
+            self.cfg.layout = quick;
+        }
         if soft || !matches!(eff, 0 | 6 | 8) {
             ctx.request_repaint_after(Duration::from_millis(33));
         }
@@ -950,7 +964,8 @@ impl App {
     fn page_keys(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
         theme::page_header(ui, t("Touches & macros"), t("Remappage, raccourcis, fonctions et macros stockés dans le clavier : ils marchent partout, même sans ce logiciel."));
         let img = self.ic(ctx, "keyboard");
-        theme::card(ui, img, t("Clavier — clique une touche"), |ui| {
+        let mut quick = self.layout();
+        theme::card_with(ui, img, t("Clavier — clique une touche"), |ui| Self::layout_menu(ui, &mut quick), |ui| {
             let layout = self.layout();
             let bindings = self.cfg.bindings.clone();
             let dk: Vec<bool> = self.cfg.display_keys.iter().map(|d| d.action != Action::Aucune).collect();
@@ -973,6 +988,9 @@ impl App {
                 }
             });
         });
+        if quick != self.layout() {
+            self.cfg.layout = quick;
+        }
         ui.add_space(6.0);
         let img = self.ic(ctx, "bolt");
         let title = match self.selected {
