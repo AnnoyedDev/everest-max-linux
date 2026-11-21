@@ -19,6 +19,7 @@ pub enum Action {
     Delai { ms: u64 },
     Multi { actions: Vec<Action> },
     Page { page: usize },
+    Media { op: String, #[serde(default)] player: String },
 }
 
 fn full_volume() -> u16 {

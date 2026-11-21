@@ -16,6 +16,18 @@ pub fn sinks() -> Vec<(String, String)> {
         .collect()
 }
 
+pub fn players() -> Vec<String> {
+    let Ok(out) = Command::new("busctl").args(["--user", "list", "--no-legend", "--no-pager"]).output() else { return vec![] };
+    String::from_utf8_lossy(&out.stdout).lines()
+        .filter_map(|l| l.split_whitespace().next()?.strip_prefix("org.mpris.MediaPlayer2.").map(String::from))
+        .collect()
+}
+
+pub fn media(op: &str, player: &str) -> Result<(), String> {
+    let name = players().into_iter().find(|p| p.starts_with(player)).ok_or(crate::i18n::t("aucun lecteur multimédia ouvert"))?;
+    spawn("busctl", &["--user", "call", &format!("org.mpris.MediaPlayer2.{name}"), "/org/mpris/MediaPlayer2", "org.mpris.MediaPlayer2.Player", op])
+}
+
 pub struct Runner {
     vk: Option<VirtualInput>,
 }
@@ -70,6 +82,7 @@ impl Runner {
             },
             Action::Multi { actions } => actions.iter().try_for_each(|x| self.run(x)),
             Action::Page { .. } => Ok(()),
+            Action::Media { op, player } => media(op, player),
         }
     }
 }

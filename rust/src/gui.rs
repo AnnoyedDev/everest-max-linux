@@ -1032,9 +1032,10 @@ impl App {
     }
 
     fn action_editor(ui: &mut egui::Ui, icons: &mut Icons, ctx: &egui::Context, a: &mut Action, sinks: &[(String, String)], pages: &[String], depth: usize) {
-        let kinds: [(&str, &str); 12] = [
+        let kinds: [(&str, &str); 13] = [
             ("x", t("Aucune")), ("terminal", t("Lancer un programme")), ("globe", t("Ouvrir un site")), ("folder", t("Ouvrir un dossier")), ("music", t("Jouer un son")),
             ("keyboard", t("Raccourci clavier")), ("power", t("Système")), ("arrow-down", t("Appuyer une touche")), ("arrow-up", t("Relâcher une touche")), ("timer", t("Attendre")), ("layers", t("Plusieurs actions")), ("pad", t("Page du DisplayPad")),
+            ("playpause", t("Lecteur multimédia")),
         ];
         let cur = match a {
             Action::Aucune => 0,
@@ -1049,6 +1050,7 @@ impl App {
             Action::Delai { .. } => 9,
             Action::Multi { .. } => 10,
             Action::Page { .. } => 11,
+            Action::Media { .. } => 12,
         };
         let mut sel = cur;
         ui.horizontal(|ui| {
@@ -1078,6 +1080,7 @@ impl App {
                 9 => Action::Delai { ms: 100 },
                 10 => Action::Multi { actions: vec![] },
                 11 => Action::Page { page: 0 },
+                12 => Action::Media { op: "PlayPause".into(), player: String::new() },
                 _ => Action::Aucune,
             };
         }
@@ -1165,6 +1168,24 @@ impl App {
                     for (i, n) in pages.iter().enumerate() {
                         ui.selectable_value(page, i, n);
                     }
+                });
+            }
+            Action::Media { op, player } => {
+                ui.horizontal_wrapped(|ui| {
+                    for (v, n) in [("PlayPause", t("Lecture/Pause")), ("Previous", t("Précédent")), ("Next", t("Suivant")), ("Stop", t("Stop"))] {
+                        ui.selectable_value(op, v.to_string(), n);
+                    }
+                });
+                ui.horizontal(|ui| {
+                    ui.label(RichText::new(t("Lecteur")).color(DIM));
+                    let shown = if player.is_empty() { t("Le premier ouvert").to_string() } else { player.clone() };
+                    egui::ComboBox::from_id_salt("player").selected_text(shown).width(200.0).show_ui(ui, |ui| {
+                        ui.selectable_value(player, String::new(), t("Le premier ouvert"));
+                        for n in actions::players() {
+                            let base = n.split('.').next().unwrap_or(&n).to_string();
+                            ui.selectable_value(player, base.clone(), base);
+                        }
+                    });
                 });
             }
             Action::Aucune => {}
