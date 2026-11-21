@@ -42,6 +42,7 @@ const DOCK_MENUS: [(u8, &str); 8] = [(0, "Horloge"), (1, "Profil"), (2, "Éclair
 #[derive(Clone, Copy, PartialEq)]
 struct DockEdit {
     menus: u8,
+    color: [u8; 3],
     saver_type: u8,
     saver_on: bool,
     off_on: bool,
@@ -54,6 +55,7 @@ impl DockEdit {
         let s = i[p::EXT_SCREEN_SETUP];
         DockEdit {
             menus: i[p::EXT_SHOW_MENU],
+            color: [i[p::EXT_MENU_COLOR], i[p::EXT_MENU_COLOR + 1], i[p::EXT_MENU_COLOR + 2]],
             saver_type: s >> 4,
             saver_on: s & 1 != 0,
             off_on: s & 2 != 0,
@@ -1600,11 +1602,16 @@ impl App {
                             }
                         });
                         ui.add_space(6.0);
+                        ui.horizontal(|ui| {
+                            ui.label(RichText::new(t("Couleur des menus")).color(DIM));
+                            egui::color_picker::color_edit_button_srgb(ui, &mut edit.color);
+                        });
+                        ui.add_space(6.0);
                         let e = *edit;
                         let ext = self.ext.clone();
                         if theme::icon_button(ui, &mut self.icons, "send", t("Appliquer au dock"), true).clicked() {
                             self.job(t("Réglages du dock"), move |d, _| {
-                                let info = apply::set_dock(d, e.menus, e.setup(), e.saver_secs, e.off_secs)?;
+                                let info = apply::set_dock(d, e.menus, e.color, e.setup(), e.saver_secs, e.off_secs)?;
                                 *ext.lock().unwrap() = Some(info);
                                 Ok(())
                             });

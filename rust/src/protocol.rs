@@ -227,6 +227,7 @@ pub fn set_extend(info: &[u8; 29]) -> Report {
 }
 
 pub const EXT_SHOW_MENU: usize = 1;
+pub const EXT_MENU_COLOR: usize = 3;
 pub const EXT_SCREEN_SETUP: usize = 6;
 pub const EXT_SAVER: usize = 7;
 pub const EXT_TURNOFF: usize = 9;

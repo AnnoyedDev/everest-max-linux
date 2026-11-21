@@ -76,9 +76,10 @@ pub fn set_profiles(dev: &mut Device, enabled: [bool; 5]) -> Result<[u8; 29]> {
     Ok(info)
 }
 
-pub fn set_dock(dev: &mut Device, menus: u8, setup: u8, saver: u16, turnoff: u16) -> Result<[u8; 29]> {
+pub fn set_dock(dev: &mut Device, menus: u8, color: [u8; 3], setup: u8, saver: u16, turnoff: u16) -> Result<[u8; 29]> {
     let mut info = dev.extend_info()?;
     info[p::EXT_SHOW_MENU] = menus.max(1);
+    info[p::EXT_MENU_COLOR..p::EXT_MENU_COLOR + 3].copy_from_slice(&color);
     info[p::EXT_SCREEN_SETUP] = setup;
     info[p::EXT_SAVER..p::EXT_SAVER + 2].copy_from_slice(&saver.clamp(5, 1800).to_le_bytes());
     info[p::EXT_TURNOFF..p::EXT_TURNOFF + 2].copy_from_slice(&turnoff.clamp(5, 1800).to_le_bytes());
