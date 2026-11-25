@@ -110,7 +110,7 @@ everest export-icons     export the PNG icons
 
 ## How it works
 
-Base Camp talks to the keyboard through a DLL (`SDKDLL.dll`) that sends 64-byte packets. I disassembled it, wrote down every command and tested each one on the real keyboard. The notes are in [PROTOCOL.md](PROTOCOL.md), in French for now.
+Base Camp talks to the keyboard through a DLL (`SDKDLL.dll`) that sends 64-byte packets. I disassembled it, wrote down every command and tested each one on the real keyboard. The notes are in [PROTOCOL.en.md](PROTOCOL.en.md).
 
 Two things are missing. Firmware updates are too risky to attempt blind, and the keyboard has no command for a real Fn layer, which is why the Fn key is done in software.
 
